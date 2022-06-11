@@ -1,0 +1,37 @@
+body{
+    color: #113;
+}
+#form[data-state="user"] .hide-if-company {
+    display: none;
+    visibility: hidden;
+    user-input: required;
+}
+
+#form[data-state="company"] .hide-if-user {
+    display: none;
+    visibility: hidden;
+}
+
+#form[data-state="all"] .hide-if-all {
+    display: none;
+    visibility: hidden;
+}
+.doc_field_block {
+    display: flex !important;
+    margin-top: 10px;
+    min-width: 300px;
+    width: fit-content !important;
+
+}
+.doc_field_title {
+    margin-right: 10px;
+}
+.doc_field_value {
+    /*border: 2px solid black;*/
+    width: fit-content;
+    min-width: 400px;
+}
+.dock_link {
+    font-weight: bold;
+    color: black;
+}
