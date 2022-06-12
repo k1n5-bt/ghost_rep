@@ -27,15 +27,15 @@ class Repository(metaclass=MetaSingleton):
                 raise ConnectionFailed
         return self.connection
 
-    async def find_email(self, id: int, email: str) -> str:
+    async def find_email(self, id: int) -> set:
+        result = []
         i = 0
         curr_email = await self.connection.lindex(str(id), i)
         while curr_email is not None:
+            result.append(curr_email)
             i += 1
             curr_email = await self.connection.lindex(str(id), i)
-            if curr_email == email:
-                return email
-        raise EmailNotFound
+        return result
 
     async def add_email(self, id: int, email: str) -> None:
         i = 0

@@ -82,13 +82,12 @@
                         <#if document??> value="${document.referencesAmount}" </#if>
                 >
             </div>
->>>>>>> document_edit_page
-<#--            <div class="form-group mb-3">-->
-<#--                <div class="custom-file">-->
-<#--                    <input type="file" name="file" id="customFile" required>-->
-<#--                    <label class="custom-file-label" for="customFile"></label>-->
-<#--                </div>-->
-<#--            </div>-->
+           <div class="form-group mb-3">
+                <div class="custom-file">
+                    <input type="file" name="file" id="customFile">
+                    <label class="custom-file-label" for="customFile"></label>
+                </div>
+            </div>
             <input type="hidden" name="_csrf" value="${_csrf.token}"/>
             <div class="form-group mb-3">
                 <button class="btn btn-primary" type="submit">Добавить</button>
@@ -96,7 +95,3 @@
         </form>
     </div>
 </@c.page>
-<<<<<<< HEAD
-=======
-
->>>>>>> document_edit_page

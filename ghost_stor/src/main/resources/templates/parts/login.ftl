@@ -9,20 +9,20 @@
         </#if>
         <div class="form-floating mb-3">
             <input required type="text" name="username" class="form-control" id="floatingInput" placeholder="name@example.com"/>
-            <label for="floatingInput">User Name</label>
+            <label for="floatingInput">Имя пользователя</label>
         </div>
         <div class="form-floating mb-3">
             <input required type="password" name="password" class="form-control" id="floatingPassword" placeholder="Password"/>
-            <label for="floatingPassword">Password</label>
+            <label for="floatingPassword">Пароль</label>
         </div>
         <#if isRegisterForm>
             <div class="form-floating mb-3">
                 <input required type="email" name="email" class="form-control" id="floatingEmail" placeholder="Email"/>
-                <label for="floatingEmail">Email</label>
+                <label for="floatingEmail">Электронная почта</label>
             </div>
             <div class="form-floating mb-3 hide-if-company">
                 <input type="text" name="createdCompanyName" class="form-control" id="floatingCompany" placeholder="Urfu"/>
-                <label for="floatingCompany">Company Name</label>
+                <label for="floatingCompany">Название компании</label>
             </div>
             <select name="companyName" class="form-floating mb-3 hide-if-user" id="companyId">
                 <#list companies as company>
@@ -31,9 +31,9 @@
             </select>
         </#if>
         <input type="hidden" name="_csrf" value="${_csrf.token}"/>
-        <#if !isRegisterForm><a class="me-2" href="/registration">Add new user</a></#if>
+        <#if !isRegisterForm><a class="me-2" href="/registration">Зарегистрироваться</a></#if>
         <button class="btn btn-primary" type="submit">
-            <#if isRegisterForm>Create<#else>Sign In</#if>
+            <#if isRegisterForm>Создать<#else>Войти</#if>
         </button>
     </form>
     <script type="text/javascript">
@@ -58,6 +58,6 @@
 <#macro logout>
     <form action="/logout" method="post">
         <input type="hidden" name="_csrf" value="${_csrf.token}"/>
-        <button class="btn btn-primary" type="submit">Sign Out</button>
+        <button class="btn btn-primary" type="submit">Выйти</button>
     </form>
 </#macro>

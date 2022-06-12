@@ -2,6 +2,8 @@ package com.example.ghost_storage.Controllers;
 
 import com.example.ghost_storage.Storage.FileRepo;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import com.example.ghost_storage.Model.*;
@@ -37,93 +39,12 @@ public class MyDocumentsController {
         return "document_show";
     }
 
-//    @GetMapping("/document")
-//    public String newDoc() throws IOException {
-//        return "document_form";
-//    }
-//
-//    @PostMapping("/document")
-//    public String createDoc(
-//            @RequestParam String name,
-//            @RequestParam String fileDesc,
-////            @RequestParam("file") MultipartFile file,
-//            @AuthenticationPrincipal User user, Map<String, Object> model) throws IOException {
-//
-////        if (uploadData != null && !uploadData.getOriginalFilename().isEmpty()) {}
-//        Data doc = new Data(name, fileDesc, user);
-//        fileRepo.save(doc);
-//        return "redirect:/document/" + doc.getId();
-//    }
-
-//    @GetMapping("/document/{documentId}/edit")
-//    public String editDoc(
-//            @PathVariable String documentId,
-//            @AuthenticationPrincipal User user, Map<String, Object> model) throws IOException {
-//        List<Data> docs = fileRepo.findById(Integer.parseInt(documentId));
-//        if (docs.size() > 0) {
-//            model.put("document", docs.get(0));
-//            return "document_form";
-//        } else {
-//            return "not_found";
-//        }
-//    }
-//
-//    @PostMapping("/document/{documentId}/edit")
-//    public String updateDoc(
-////            @RequestParam("file") MultipartFile uploadData,
-//            @PathVariable String documentId,
-//            @RequestParam String name,
-//            @RequestParam String fileDesc,
-//            @AuthenticationPrincipal User user, Map<String, Object> model) throws IOException {
-//        List<Data> docs = fileRepo.findById(Integer.parseInt(documentId));
-//        if (docs.size() == 0) {
-//            return "not_found";
-//        }
-//        Data doc = docs.get(0);
-//
-//        doc.setName(name);
-//        doc.setFileDesc(fileDesc);
-//
-//        fileRepo.save(doc);
-//        return "redirect:/document/" + doc.getId();
-//    }
-
-//    public String adda(
-//            @RequestParam("file") MultipartFile uploadData,
-//            @RequestParam String name,
-//            @RequestParam String fileDesc,
-//            @AuthenticationPrincipal User user, Map<String, Object> model) throws IOException {
-//        if (uploadData != null && !uploadData.getOriginalFilename().isEmpty()) {
-//            Data data = new Data(name, fileDesc, user);
-//            File uploadFolder = new File(uploadPath);
-//            if (!uploadFolder.exists()) {
-//                uploadFolder.mkdir();
-//            }
-//            String uuidFile = UUID.randomUUID().toString();
-//            String resultFileName = uuidFile + "." + uploadData.getOriginalFilename();
-//            uploadData.transferTo(new File(uploadPath + "/" + resultFileName));
-//            data.setFilename(resultFileName);
-//            fileRepo.save(data);
-//        }
-//        model.put("messages", fileRepo.findByAuthor(user));
-////        return "my_docs";
-//        return "redirect:/document/" + "id";
-//    }
-
-//    @GetMapping("/my_docs")
-//    public String my_docs(
-//            @RequestParam(required = false, defaultValue = "") String descFilter,
-//            @AuthenticationPrincipal User user,
-//            Map<String, Object> model) throws FileNotFoundException {
-//        Data file = fileRepo.findById(Integer.parseInt(documentId)).get(0);
-//        model.put("document", file);
-//        return "document_show";
-//    }
-
     @GetMapping("/document")
     public String newDoc(
             @AuthenticationPrincipal User user,
             Map<String, Object> model) throws IOException {
+        if (!user.isAdminCompany())
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).toString();
         return "document_form";
     }
 
@@ -143,10 +64,11 @@ public class MyDocumentsController {
             @RequestParam(required = false, defaultValue = "") String changes,
             @RequestParam(required = false, defaultValue = "") String status,
             @RequestParam(required = false, defaultValue = "") String referencesAmount,
-//            @RequestParam("file") MultipartFile file,
+            @RequestParam("file") MultipartFile file,
             @AuthenticationPrincipal User user, Map<String, Object> model) throws IOException {
+        if (!user.isAdminCompany())
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).toString();
 
-//        if (uploadData != null && !uploadData.getOriginalFilename().isEmpty()) {}
         Data doc = new Data(
                 name,
                 fileDesc,
@@ -164,27 +86,43 @@ public class MyDocumentsController {
                 status,
                 referencesAmount
         );
+        if (file != null && !file.getOriginalFilename().isEmpty()) {
+            String resultFileName = createFile(file);
+            doc.setFilename(resultFileName);
+        }
         fileRepo.save(doc);
         return "redirect:/document/" + doc.getId();
     }
 
+    private String createFile(MultipartFile file) throws IOException {
+        File uploadFolder = new File(uploadPath);
+        if (!uploadFolder.exists()) {
+            uploadFolder.mkdir();
+        }
+        String uuidFile = UUID.randomUUID().toString();
+        String resultFileName = uuidFile + "." + file.getOriginalFilename();
+        file.transferTo(new File(uploadPath + "/" + resultFileName));
+        return resultFileName;
+    }
 
     @GetMapping("/document/{documentId}/edit")
     public String editDoc(
             @PathVariable String documentId,
             @AuthenticationPrincipal User user, Map<String, Object> model) throws IOException {
+        if (!user.isAdminCompany())
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).toString();
         List<Data> docs = fileRepo.findById(Integer.parseInt(documentId));
         if (docs.size() > 0) {
             model.put("document", docs.get(0));
             return "document_form";
         } else {
-            return "not_found";
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).toString();
         }
     }
 
     @PostMapping("/document/{documentId}/edit")
     public String updateDoc(
-//            @RequestParam("file") MultipartFile uploadData,
+            @RequestParam("file") MultipartFile file,
             @PathVariable String documentId,
             @RequestParam String name,
             @RequestParam(required = false, defaultValue = "") String fileDesc,
@@ -202,11 +140,17 @@ public class MyDocumentsController {
             @RequestParam(required = false, defaultValue = "") String referencesAmount,
 
             @AuthenticationPrincipal User user, Map<String, Object> model) throws IOException {
+        if (!user.isAdminCompany())
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).toString();
         List<Data> docs = fileRepo.findById(Integer.parseInt(documentId));
         if (docs.size() == 0) {
-            return "not_found";
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).toString();
         }
         Data doc = docs.get(0);
+        if (file != null && !file.getOriginalFilename().isEmpty()) {
+            String resultFileName = createFile(file);
+            doc.setFilename(resultFileName);
+        }
         doc.setName(name);
         doc.setFileDesc(fileDesc);
         doc.setCodeName(codeName);
@@ -230,16 +174,18 @@ public class MyDocumentsController {
             @PathVariable String dataID,
             @AuthenticationPrincipal User user,
             Map<String, Object> model) throws FileNotFoundException {
+        if (!user.isAdminCompany())
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).toString();
         List<Data> dataList = fileRepo.findById(Integer.parseInt(dataID));
         if (dataList.isEmpty()) {
             return "redirect:/main";
         }
         Data data = dataList.get(0);
         boolean userIsAuthor = user.getId().equals(data.getAuthor().getId());
-        if (!user.isAdmin() && !userIsAuthor) {
+        if (!user.isAdminCompany() && !userIsAuthor) {
             return "redirect:/main";
         }
-        if ( data.getFilename().length() > 0) {
+        if (data.getFilename().length() > 0) {
             File file = new File(uploadPath + "/" + data.getFilename());
             if (!file.delete()) throw new FileNotFoundException();
         }

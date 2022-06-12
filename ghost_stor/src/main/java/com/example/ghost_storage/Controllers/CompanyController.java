@@ -10,7 +10,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.*;
 import java.util.Map;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/company")
@@ -40,10 +42,21 @@ public class CompanyController {
     }
 
     @GetMapping("allow")
-    public String allow(@AuthenticationPrincipal User user, Map<String, Object> model) {
+    public String allow(@AuthenticationPrincipal User user, Map<String, Object> model) throws IOException {
         if (!user.isAdminCompany())
             return ResponseEntity.status(HttpStatus.FORBIDDEN).toString();
+        Set<String> emails = companyService.getAllowedEmails(user.getCompany());
+        model.put("emails", emails);
+        return "allowEmails";
+    }
 
-        return "requests";
+    @PostMapping("allow")
+    public String allowEmail(@AuthenticationPrincipal User user,
+                             @RequestParam String email,
+                             Map<String, Object> model) throws IOException {
+        if (!user.isAdminCompany())
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).toString();
+        companyService.allowEmail(email, user.getCompany());
+        return "redirect:/company/allow";
     }
 }

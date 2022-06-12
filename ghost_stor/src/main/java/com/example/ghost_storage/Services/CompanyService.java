@@ -2,15 +2,17 @@ package com.example.ghost_storage.Services;
 
 import com.example.ghost_storage.Model.Company;
 import com.example.ghost_storage.Model.CompanyRole;
-import com.example.ghost_storage.Model.Role;
 import com.example.ghost_storage.Model.User;
-import com.example.ghost_storage.Services.MailSender;
 import com.example.ghost_storage.Storage.CompanyRepo;
 import com.example.ghost_storage.Storage.UserRepo;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.*;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Scanner;
 import java.util.Set;
 
 @Service
@@ -50,5 +52,29 @@ public class CompanyService {
         company.addUser(user);
         companyRepo.save(company);
         return true;
+    }
+
+    public Set<String> getAllowedEmails(Company company) throws IOException {
+        Set<String> emails = new HashSet<>();
+        URL url = new URL(String.format("http://redis_stor:8085/get_email?id=%s", company.getId()));
+        URLConnection con = url.openConnection();
+        InputStream in = con.getInputStream();
+        String encoding = con.getContentEncoding();
+        Scanner s = new Scanner(in).useDelimiter("\\A");
+        String body = s.hasNext() ? s.next() : "";
+        for (var email : body.split(",")){
+            if (!email.equals(""))
+                emails.add(email);
+        }
+        return emails;
+    }
+
+    public void allowEmail(String email, Company company) throws IOException {
+        URL url = new URL(String.format("http://redis_stor:8085/add_email?email=%s&id=%s", email, company.getId()));
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("POST");
+        connection.connect();
+
+        int code = connection.getResponseCode();
     }
 }

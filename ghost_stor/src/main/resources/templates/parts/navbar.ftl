@@ -11,27 +11,23 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-<#--                <li class="nav-item">-->
-<#--                    <a class="nav-link" aria-current="page" href="/">Home</a>-->
-<#--                </li>-->
-                <#if isAdmin>
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="/main">Все документы</a>
-                    </li>
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="/main">Документы</a>
+                </li>
+                <#if isCompanyAdmin>
                     <li class="nav-item">
                         <a class="nav-link" aria-current="page" href="/document">Новый документ</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="/user">Панель администратора</a>
+                        <a class="nav-link" aria-current="page" href="/company/requests">Запросы на добавление в компанию</a>
                     </li>
-                <#else>
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="/main">Документы</a>
+                    <li>
+                        <a class="nav-link" aria-current="page" href="/company/allow">Добавить разрешенный для регистрации email</a>
                     </li>
                 </#if>
-                <#if isCompanyAdmin>
+                <#if isAdmin>
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="/company/requests">Requests to company</a>
+                        <a class="nav-link" aria-current="page" href="/user">Панель администратора</a>
                     </li>
                 </#if>
             </ul>

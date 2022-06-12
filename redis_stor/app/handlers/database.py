@@ -10,14 +10,17 @@ def validation_email_and_id(params: dict):
 
 async def get_email(request: web.Request):
     params = request.query
-    if not validation_email_and_id(params):
+    if 'id' not in params.keys():
         return web.json_response(text='The parameter is missing', status=400)
     try:
         await Repository().connect()
-        email = await Repository().find_email(email=params['email'], id=params['id'])
+        emails = await Repository().find_email(id=params['id'])
     except Exception as err:
         return web.json_response(text=str(err), status=400)
-    return web.json_response(text=email, status=200)
+    result = ''
+    for i in emails:
+        result += f"{i},"
+    return web.json_response(text=result, status=200)
 
 
 async def add_email(request: web):

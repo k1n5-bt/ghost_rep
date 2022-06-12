@@ -13,7 +13,10 @@
                         <span>
                             <a href="/document/${message.id}" class="dock_link">${message.name}</a>
                         </span><br>
-                        <#if isAdmin>
+                        <#if message.filename != "">
+                            <a href="/files/${message.filename}" download>Скачать</a><br>
+                        </#if>
+                        <#if isCompanyAdmin>
                             <a href="/delete/${message.id}">Удалить</a><br>
                             <a href="/document/${message.id}/edit">Редактировать</a>
                         </#if>

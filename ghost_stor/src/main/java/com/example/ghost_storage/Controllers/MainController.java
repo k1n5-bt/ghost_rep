@@ -41,21 +41,12 @@ class MainController {
 
     @GetMapping("/main")
     public String main(
-            @AuthenticationPrincipal User user,
             @RequestParam(defaultValue = "") String descFilter,
             @RequestParam(defaultValue = "") String nameFilter,
             Map<String, Object> model) {
-        if (!user.isAddInCompany())
-            return "notAddCompany";
         Iterable<Data> messages = fileRepo.findByFileDescLikeAndNameLike(li(descFilter), li(nameFilter));
-        Set<Data> resultFiles = new HashSet<>();
-        messages.forEach(file ->
-        {
-            if (file.getAuthor().getCompany().getId().equals(user.getCompany().getId()))
-                resultFiles.add(file);
-        });
 
-        model.put("messages", resultFiles);
+        model.put("messages", messages);
         model.put("formAction", "/main");
         model.put("descFilter", descFilter);
         model.put("nameFilter", nameFilter);

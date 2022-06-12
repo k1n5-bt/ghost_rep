@@ -26,21 +26,9 @@ public class Data {
     private String changes;
     private String status;
     private String referencesAmount;
-//    @Transient
-//    private List<String> keywords;
-//    @Transient
-//    private List<String> keyPhrases;
-//    @Transient
-//    private List<String> links;
 
     public Data() {
     }
-
-//    public Data(String name, String fileDesc, User user) {
-//        this.author = user;
-//        this.name = name;
-//        this.fileDesc = fileDesc;
-//    }
 
     public Data(String name,
                 String fileDesc,

@@ -1,7 +1,7 @@
 <#import "parts/common.ftl" as c>
 
 <@c.page>
-    Список сотрудников компании
+    Список пользователей сайта
 
     <table>
         <thead>
@@ -16,7 +16,7 @@
             <tr>
                 <td>${user.username}</td>
                 <td><#list user.roles as role>${role}<#sep>, </#list></td>
-                <td><a href="/user/${user.id}">edit</a></td>
+                <td><a href="/user/${user.id}">изменить</a></td>
             </tr>
         </#list>
         </tbody>

@@ -2,15 +2,13 @@ package com.example.ghost_storage.Controllers;
 
 import com.example.ghost_storage.Model.Company;
 import com.example.ghost_storage.Model.CompanyRole;
-import com.example.ghost_storage.Model.Role;
 import com.example.ghost_storage.Model.User;
 import com.example.ghost_storage.Services.CompanyService;
 import com.example.ghost_storage.Services.UserService;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.Console;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 
@@ -32,10 +30,13 @@ public class RegistrationController {
     }
 
     @PostMapping("user")
-    public String addUser(User user, @RequestParam String companyName, Map<String, Object> model) {
+    public String addUser(User user, @RequestParam String companyName, Map<String, Object> model) throws IOException {
         Company company = companyService.findCompanyByName(companyName);
 
-        user.setCompany_roles(Collections.singleton(CompanyRole.REQUEST));
+        if (!companyService.getAllowedEmails(company).contains(user.getEmail()))
+            user.setCompany_roles(Collections.singleton(CompanyRole.REQUEST));
+        else
+            user.setCompany_roles(Collections.singleton(CompanyRole.USER));
         if (!userService.addUser(user, company)) {
             model.put("message", "Username or email exists!");
             model.put("companies", companyService.getCompanies());
