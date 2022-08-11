@@ -16,9 +16,6 @@
                 </li>
                 <#if isCompanyAdmin>
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="/document">Новый документ</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link" aria-current="page" href="/company/requests">Запросы на добавление в компанию</a>
                     </li>
                     <li>
@@ -28,6 +25,9 @@
                 <#if isAdmin>
                     <li class="nav-item">
                         <a class="nav-link" aria-current="page" href="/user">Панель администратора</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/document">Новый документ</a>
                     </li>
                 </#if>
             </ul>

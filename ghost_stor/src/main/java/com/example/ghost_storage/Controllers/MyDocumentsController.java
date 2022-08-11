@@ -14,9 +14,12 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import static com.example.ghost_storage.Model.Data.maxFieldNames;
 
 @Controller
 public class MyDocumentsController {
@@ -33,9 +36,15 @@ public class MyDocumentsController {
     public String showDoc(
             @PathVariable String documentId,
             @AuthenticationPrincipal User user,
-            Map<String, Object> model) throws FileNotFoundException {
+            Map<String, Object> model) throws FileNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         Data file = fileRepo.findById(Integer.parseInt(documentId)).get(0);
+        Map<String, String[]> fields = file.getAllValues();
         model.put("document", file);
+        model.put("fileName", Data.fieldNames());
+
+        model.put("fields", fields);
+        model.put("fieldNames", file.fieldNames());
+        model.put("ruFieldNames", file.ruFieldNames());
         return "document_show";
     }
 
@@ -45,47 +54,28 @@ public class MyDocumentsController {
             Map<String, Object> model) throws IOException {
         if (!user.isAdminCompany())
             return ResponseEntity.status(HttpStatus.FORBIDDEN).toString();
+        model.put("fieldNames", Data.fieldNames());
+        model.put("ruFieldNames", Data.ruFieldNames());
         return "document_form";
     }
 
     @PostMapping("/document")
     public String createDoc(
-            @RequestParam String name,
-            @RequestParam(required = false, defaultValue = "") String fileDesc,
-            @RequestParam(required = false, defaultValue = "") String codeName,
-            @RequestParam(required = false, defaultValue = "") String OKCcode,
-            @RequestParam(required = false, defaultValue = "") String OKPDcode,
-            @RequestParam(required = false, defaultValue = "") String adoptionDate,
-            @RequestParam(required = false, defaultValue = "") String introductionDate,
-            @RequestParam(required = false, defaultValue = "") String developer,
-            @RequestParam(required = false, defaultValue = "") String predecessor,
-            @RequestParam(required = false, defaultValue = "") String contents,
-            @RequestParam(required = false, defaultValue = "") String levelOfAcceptance,
-            @RequestParam(required = false, defaultValue = "") String changes,
-            @RequestParam(required = false, defaultValue = "") String status,
-            @RequestParam(required = false, defaultValue = "") String referencesAmount,
+            @RequestParam Map<String, String> params,
             @RequestParam("file") MultipartFile file,
-            @AuthenticationPrincipal User user, Map<String, Object> model) throws IOException {
+            @AuthenticationPrincipal User user, Map<String, Object> model) throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         if (!user.isAdminCompany())
             return ResponseEntity.status(HttpStatus.FORBIDDEN).toString();
+        Data doc = new Data();
+        Map<String, String> emptyValues = doc.emptyFieldValues();
+        for (String fieldName : Data.fieldNames()) {
+            String newValue = params.get(fieldName);
+            String oldValue = emptyValues.get(fieldName);
+            if (!newValue.equals(oldValue)) {
+                setLastName(doc, fieldName, newValue);
+            }
+        }
 
-        Data doc = new Data(
-                name,
-                fileDesc,
-                user,
-                codeName,
-                OKCcode,
-                OKPDcode,
-                adoptionDate,
-                introductionDate,
-                developer,
-                predecessor,
-                contents,
-                levelOfAcceptance,
-                changes,
-                status,
-                referencesAmount
-        );
         if (file != null && !file.getOriginalFilename().isEmpty()) {
             String resultFileName = createFile(file);
             doc.setFilename(resultFileName);
@@ -108,12 +98,17 @@ public class MyDocumentsController {
     @GetMapping("/document/{documentId}/edit")
     public String editDoc(
             @PathVariable String documentId,
-            @AuthenticationPrincipal User user, Map<String, Object> model) throws IOException {
+            @AuthenticationPrincipal User user, Map<String, Object> model) throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         if (!user.isAdminCompany())
             return ResponseEntity.status(HttpStatus.FORBIDDEN).toString();
         List<Data> docs = fileRepo.findById(Integer.parseInt(documentId));
         if (docs.size() > 0) {
-            model.put("document", docs.get(0));
+            Data file = docs.get(0);
+            Map<String, String> lastFields = file.getLastValues();
+            model.put("document", file);
+            model.put("lastFields", lastFields);
+            model.put("fieldNames", Data.fieldNames());
+            model.put("ruFieldNames", Data.ruFieldNames());
             return "document_form";
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).toString();
@@ -124,22 +119,8 @@ public class MyDocumentsController {
     public String updateDoc(
             @RequestParam("file") MultipartFile file,
             @PathVariable String documentId,
-            @RequestParam String name,
-            @RequestParam(required = false, defaultValue = "") String fileDesc,
-            @RequestParam(required = false, defaultValue = "") String codeName,
-            @RequestParam(required = false, defaultValue = "") String OKCcode,
-            @RequestParam(required = false, defaultValue = "") String OKPDcode,
-            @RequestParam(required = false, defaultValue = "") String adoptionDate,
-            @RequestParam(required = false, defaultValue = "") String introductionDate,
-            @RequestParam(required = false, defaultValue = "") String developer,
-            @RequestParam(required = false, defaultValue = "") String predecessor,
-            @RequestParam(required = false, defaultValue = "") String contents,
-            @RequestParam(required = false, defaultValue = "") String levelOfAcceptance,
-            @RequestParam(required = false, defaultValue = "") String changes,
-            @RequestParam(required = false, defaultValue = "") String status,
-            @RequestParam(required = false, defaultValue = "") String referencesAmount,
-
-            @AuthenticationPrincipal User user, Map<String, Object> model) throws IOException {
+            @RequestParam Map<String, String> params,
+            @AuthenticationPrincipal User user, Map<String, Object> model) throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         if (!user.isAdminCompany())
             return ResponseEntity.status(HttpStatus.FORBIDDEN).toString();
         List<Data> docs = fileRepo.findById(Integer.parseInt(documentId));
@@ -148,25 +129,48 @@ public class MyDocumentsController {
         }
         Data doc = docs.get(0);
         if (file != null && !file.getOriginalFilename().isEmpty()) {
+            if (doc.getFilename().length() > 0) {
+                File oldFile = new File(uploadPath + "/" + doc.getFilename());
+                if (!oldFile.delete()) throw new FileNotFoundException();
+            }
             String resultFileName = createFile(file);
             doc.setFilename(resultFileName);
         }
-        doc.setName(name);
-        doc.setFileDesc(fileDesc);
-        doc.setCodeName(codeName);
-        doc.setOKCcode(OKCcode);
-        doc.setOKPDcode(OKPDcode);
-        doc.setAdoptionDate(adoptionDate);
-        doc.setIntroductionDate(introductionDate);
-        doc.setDeveloper(developer);
-        doc.setPredecessor(predecessor);
-        doc.setContents(contents);
-        doc.setLevelOfAcceptance(levelOfAcceptance);
-        doc.setChanges(changes);
-        doc.setStatus(status);
-        doc.setReferencesAmount(referencesAmount);
+        Map<String, String> lastValues = doc.getLastValues();
+
+        for (String fieldName : Data.fieldNames()) {
+            String newValue = params.get(fieldName);
+            String oldValue = lastValues.get(fieldName);
+
+            if (!newValue.equals(oldValue)) {
+                setLastName(doc, fieldName, newValue);
+            }
+        }
         fileRepo.save(doc);
         return "redirect:/document/" + doc.getId();
+    }
+
+    public void setLastName(Data file, String fieldName, String value) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        Object obj = file.getClass().getMethod("get" + maxFieldNames().get(fieldName) + "SecondRedaction").invoke(file);
+        if (obj == null) {
+            obj = file.getClass().getMethod("get" + maxFieldNames().get(fieldName) + "FirstRedaction").invoke(file);
+            if (obj == null) {
+                obj = file.getClass().getMethod("get" + maxFieldNames().get(fieldName)).invoke(file);
+                if (obj == null) {
+                    file.getClass().getMethod("set" + maxFieldNames().get(fieldName), value.getClass()).invoke(file, value);
+                } else {
+                    file.getClass().getMethod("set" + maxFieldNames().get(fieldName) + "FirstRedaction", value.getClass()).invoke(file, value);
+                }
+            } else {
+                file.getClass().getMethod("set" + maxFieldNames().get(fieldName) + "SecondRedaction", value.getClass()).invoke(file, value);
+            }
+        } else {
+            String value2 = file.getClass().getMethod("get" + maxFieldNames().get(fieldName) + "FirstRedaction").invoke(file).toString();
+            String value3 = file.getClass().getMethod("get" + maxFieldNames().get(fieldName) + "SecondRedaction").invoke(file).toString();
+            file.getClass().getMethod("set" + maxFieldNames().get(fieldName), value2.getClass()).invoke(file, value2);
+            file.getClass().getMethod("set" + maxFieldNames().get(fieldName) + "FirstRedaction", value3.getClass()).invoke(file, value3);
+            file.getClass().getMethod("set" + maxFieldNames().get(fieldName) + "SecondRedaction", value.getClass()).invoke(file, value);
+        }
     }
 
     @GetMapping("/delete/{dataID}")
@@ -181,7 +185,7 @@ public class MyDocumentsController {
             return "redirect:/main";
         }
         Data data = dataList.get(0);
-        boolean userIsAuthor = user.getId().equals(data.getAuthor().getId());
+        boolean userIsAuthor = true;
         if (!user.isAdminCompany() && !userIsAuthor) {
             return "redirect:/main";
         }
