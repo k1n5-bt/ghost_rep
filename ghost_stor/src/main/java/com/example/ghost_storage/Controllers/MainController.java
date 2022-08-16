@@ -44,8 +44,8 @@ class MainController {
             @RequestParam(defaultValue = "") String descFilter,
             @RequestParam(defaultValue = "") String nameFilter,
             Map<String, Object> model) {
-        Iterable<Data> messages = fileRepo.findByFileDescLikeAndNameLike(li(descFilter), li(nameFilter));
-
+//        Iterable<Data> messages = fileRepo.findByFileDescLikeAndNameLike(li(descFilter), li(nameFilter));
+        Iterable<Data> messages = fileRepo.findAll();
         model.put("messages", messages);
         model.put("formAction", "/main");
         model.put("descFilter", descFilter);
