@@ -46,7 +46,7 @@ public class User implements UserDetails {
 
     public boolean isAdmin(){ return roles.contains(Role.ADMIN); }
 
-    public boolean isAdminCompany(){ return company_roles.contains(CompanyRole.ADMIN); }
+    public boolean isAdminCompany(){ return true; }
 
     public boolean isAddInCompany(){ return !company_roles.contains(CompanyRole.REQUEST); }
 
