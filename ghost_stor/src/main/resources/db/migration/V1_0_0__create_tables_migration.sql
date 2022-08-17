@@ -1,15 +1,4 @@
 create sequence hibernate_sequence start 1 increment 1;
-create table company
-(
-    id   int8 not null,
-    name varchar(255) not null,
-    primary key (id)
-);
-create table company_role
-(
-    user_id       int8 not null,
-    company_roles varchar(255)
-);
 create table data
 (
     id                  int4 not null,
@@ -74,14 +63,9 @@ create table usr
     email           varchar(255) not null,
     password        varchar(255) not null,
     username        varchar(255) not null,
-    company_id      int8,
     primary key (id)
 );
-alter table if exists company_role
-    add constraint FK17m5ave3spct6gtr8sh1imxcp foreign key (user_id) references usr;
 alter table if exists data
     add constraint FKlbca5nxa8xqrb7ieybvrxxuo3 foreign key (user_id) references usr;
 alter table if exists user_role
-    add constraint FKfpm8swft53ulq2hl11yplpr5 foreign key (user_id) references usr;
-alter table if exists usr
-    add constraint FK4yj0ffdl8cj1tgjsa3hfcw46o foreign key (company_id) references company;
+    add constraint FKfpm8swft53ulq2hl11yplpr5 foreign key (user_id) references usr

@@ -14,20 +14,12 @@
                 <li class="nav-item">
                     <a class="nav-link" aria-current="page" href="/main">Документы</a>
                 </li>
-                <#if isCompanyAdmin>
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="/company/requests">Запросы на добавление в компанию</a>
-                    </li>
-                    <li>
-                        <a class="nav-link" aria-current="page" href="/company/allow">Добавить разрешенный для регистрации email</a>
-                    </li>
-                </#if>
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="/document">Новый документ</a>
+                </li>
                 <#if isAdmin>
                     <li class="nav-item">
                         <a class="nav-link" aria-current="page" href="/user">Панель администратора</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="/document">Новый документ</a>
                     </li>
                 </#if>
             </ul>
