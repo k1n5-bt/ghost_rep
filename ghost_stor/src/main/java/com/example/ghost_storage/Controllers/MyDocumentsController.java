@@ -48,6 +48,24 @@ public class MyDocumentsController {
         return "document_show";
     }
 
+
+    @GetMapping("/archived_doc/{documentId}")
+    public String showArchDoc(
+            @PathVariable String documentId,
+            @AuthenticationPrincipal User user,
+            Map<String, Object> model) throws FileNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        Data file = fileRepo.findById(Integer.parseInt(documentId)).get(0);
+        Map<String, String[]> fields = file.getAllValues();
+        if (!file.getArchivalStatus())
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).toString();
+        model.put("document", file);
+        model.put("fileName", Data.fieldNames());
+        model.put("fields", fields);
+        model.put("fieldNames", file.fieldNames());
+        model.put("ruFieldNames", file.ruFieldNames());
+        return "archived_document";
+    }
+
     @GetMapping("/document")
     public String newDoc(
             @AuthenticationPrincipal User user,
@@ -124,9 +142,8 @@ public class MyDocumentsController {
         if (!user.isAdminCompany())
             return ResponseEntity.status(HttpStatus.FORBIDDEN).toString();
         List<Data> docs = fileRepo.findById(Integer.parseInt(documentId));
-        if (docs.size() == 0) {
+        if (docs.size() == 0 || docs.get(0).getArchivalStatus())
             return ResponseEntity.status(HttpStatus.NOT_FOUND).toString();
-        }
         Data doc = docs.get(0);
         if (file != null && !file.getOriginalFilename().isEmpty()) {
             if (doc.getFilename().length() > 0) {
@@ -151,25 +168,18 @@ public class MyDocumentsController {
     }
 
     public void setLastName(Data file, String fieldName, String value) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        Object obj = file.getClass().getMethod("get" + maxFieldNames().get(fieldName) + "SecondRedaction").invoke(file);
+        Object obj = file.getClass().getMethod("get" + maxFieldNames().get(fieldName) + "FirstRedaction").invoke(file);
         if (obj == null) {
-            obj = file.getClass().getMethod("get" + maxFieldNames().get(fieldName) + "FirstRedaction").invoke(file);
+            obj = file.getClass().getMethod("get" + maxFieldNames().get(fieldName)).invoke(file);
             if (obj == null) {
-                obj = file.getClass().getMethod("get" + maxFieldNames().get(fieldName)).invoke(file);
-                if (obj == null) {
-                    file.getClass().getMethod("set" + maxFieldNames().get(fieldName), value.getClass()).invoke(file, value);
-                } else {
-                    file.getClass().getMethod("set" + maxFieldNames().get(fieldName) + "FirstRedaction", value.getClass()).invoke(file, value);
-                }
+                file.getClass().getMethod("set" + maxFieldNames().get(fieldName), value.getClass()).invoke(file, value);
             } else {
-                file.getClass().getMethod("set" + maxFieldNames().get(fieldName) + "SecondRedaction", value.getClass()).invoke(file, value);
+                file.getClass().getMethod("set" + maxFieldNames().get(fieldName) + "FirstRedaction", value.getClass()).invoke(file, value);
             }
         } else {
             String value2 = file.getClass().getMethod("get" + maxFieldNames().get(fieldName) + "FirstRedaction").invoke(file).toString();
-            String value3 = file.getClass().getMethod("get" + maxFieldNames().get(fieldName) + "SecondRedaction").invoke(file).toString();
             file.getClass().getMethod("set" + maxFieldNames().get(fieldName), value2.getClass()).invoke(file, value2);
-            file.getClass().getMethod("set" + maxFieldNames().get(fieldName) + "FirstRedaction", value3.getClass()).invoke(file, value3);
-            file.getClass().getMethod("set" + maxFieldNames().get(fieldName) + "SecondRedaction", value.getClass()).invoke(file, value);
+            file.getClass().getMethod("set" + maxFieldNames().get(fieldName) + "FirstRedaction", value.getClass()).invoke(file, value);
         }
     }
 
@@ -178,7 +188,7 @@ public class MyDocumentsController {
             @PathVariable String dataID,
             @AuthenticationPrincipal User user,
             Map<String, Object> model) throws FileNotFoundException {
-        if (!user.isAdminCompany())
+        if (!user.isAdmin())
             return ResponseEntity.status(HttpStatus.FORBIDDEN).toString();
         List<Data> dataList = fileRepo.findById(Integer.parseInt(dataID));
         if (dataList.isEmpty()) {
@@ -197,5 +207,47 @@ public class MyDocumentsController {
 
         model.put("messages", fileRepo.findAll());
         return "redirect:/main";
+    }
+
+    @GetMapping("/document/{documentId}/archive")
+    public String archiveDoc(
+            @PathVariable String documentId,
+            @AuthenticationPrincipal User user, Map<String, Object> model) throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        if (!user.isAdmin())
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).toString();
+        List<Data> docs = fileRepo.findById(Integer.parseInt(documentId));
+        if (docs.size() > 0) {
+            Data file = docs.get(0);
+            file.setArchived();
+            fileRepo.save(file);
+            return "redirect:/archived";
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).toString();
+        }
+    }
+
+    @GetMapping("/document/{documentId}/replace")
+    public String replaceDoc(
+            @PathVariable String documentId,
+            @AuthenticationPrincipal User user, Map<String, Object> model) throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        if (!user.isAdmin())
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).toString();
+        List<Data> docs = fileRepo.findById(Integer.parseInt(documentId));
+        if (docs.size() > 0) {
+            Data file = docs.get(0);
+            if (file.getArchivalStatus())
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).toString();
+
+
+            Map<String, String> lastFields = file.getLastValues();
+            model.put("document", file);
+            model.put("lastFields", lastFields);
+            model.put("fieldNames", Data.fieldNames());
+            model.put("ruFieldNames", Data.ruFieldNames());
+            return "document_form";
+
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).toString();
+        }
     }
 }
