@@ -4,6 +4,7 @@ import javax.persistence.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 @Entity
 public class Data {
@@ -52,7 +53,9 @@ public class Data {
         return dict;
     }
 
-    public Data() {}
+    public Data() {
+        setState(State.ACTIVE);
+    }
 
     public Data(String name, String fileDesc, String OKCcode, String OKPDcode, String adoptionDate, String introductionDate, String developer, String predecessor, String contents, String levelOfAcceptance, String changes, String status, String referencesAmount) {
         this.name = name;
@@ -155,6 +158,40 @@ public class Data {
     @JoinColumn(name = "user_id")
     private User author;
     private String filename = "";
+
+    public enum State {
+        ACTIVE(100), CANCELED(200), REPLACED(300);
+
+        private int value;
+
+        State(int value) { this.value = value; }
+
+        public int getValue() { return value; }
+
+        public static State parse(int id) {
+            State state = null; // Default
+            for (State item : State.values()) {
+                if (item.getValue()==id) {
+                    state = item;
+                    break;
+                }
+            }
+            return state;
+        }
+
+    };
+
+    @Column(name = "STATE_ID")
+    private int stateId;
+
+    public State getState () {
+        return State.parse(this.stateId);
+    }
+
+    public void setState(State right) {
+        this.stateId = right.getValue();
+    }
+
     private String codeName;
     private String OKCcode;
     private String OKPDcode;
