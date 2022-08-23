@@ -1,6 +1,6 @@
 <#import "parts/common.ftl" as c>
 
 <@c.page>
-    <h5>Thank you for registration!</h5>
-    <div>Check your email for activate account.</div>
+    <h5>Спасибо за регистрацию!</h5>
+    <div>Проверьте вашу электронную почту для подтверждения регистрации.</div>
 </@c.page>

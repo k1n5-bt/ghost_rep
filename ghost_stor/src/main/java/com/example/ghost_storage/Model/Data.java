@@ -2,11 +2,8 @@ package com.example.ghost_storage.Model;
 
 import javax.persistence.*;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.lang.reflect.Method;
 
 @Entity
 public class Data {

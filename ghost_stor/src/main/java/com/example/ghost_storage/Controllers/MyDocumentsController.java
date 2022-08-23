@@ -4,6 +4,7 @@ import com.example.ghost_storage.Storage.FileRepo;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import com.example.ghost_storage.Model.*;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import static com.example.ghost_storage.Model.Data.maxFieldNames;
@@ -52,8 +54,6 @@ public class MyDocumentsController {
     public String newDoc(
             @AuthenticationPrincipal User user,
             Map<String, Object> model) throws IOException {
-        if (!user.isAdminCompany())
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).toString();
         model.put("fieldNames", Data.fieldNames());
         model.put("ruFieldNames", Data.ruFieldNames());
         return "document_form";
@@ -64,8 +64,6 @@ public class MyDocumentsController {
             @RequestParam Map<String, String> params,
             @RequestParam("file") MultipartFile file,
             @AuthenticationPrincipal User user, Map<String, Object> model) throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
-        if (!user.isAdminCompany())
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).toString();
         Data doc = new Data();
         Map<String, String> emptyValues = doc.emptyFieldValues();
         for (String fieldName : Data.fieldNames()) {
@@ -99,8 +97,6 @@ public class MyDocumentsController {
     public String editDoc(
             @PathVariable String documentId,
             @AuthenticationPrincipal User user, Map<String, Object> model) throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
-        if (!user.isAdminCompany())
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).toString();
         List<Data> docs = fileRepo.findById(Integer.parseInt(documentId));
         if (docs.size() > 0) {
             Data file = docs.get(0);
@@ -121,8 +117,6 @@ public class MyDocumentsController {
             @PathVariable String documentId,
             @RequestParam Map<String, String> params,
             @AuthenticationPrincipal User user, Map<String, Object> model) throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
-        if (!user.isAdminCompany())
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).toString();
         List<Data> docs = fileRepo.findById(Integer.parseInt(documentId));
         if (docs.size() == 0) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).toString();
@@ -178,15 +172,13 @@ public class MyDocumentsController {
             @PathVariable String dataID,
             @AuthenticationPrincipal User user,
             Map<String, Object> model) throws FileNotFoundException {
-        if (!user.isAdminCompany())
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).toString();
         List<Data> dataList = fileRepo.findById(Integer.parseInt(dataID));
         if (dataList.isEmpty()) {
             return "redirect:/main";
         }
         Data data = dataList.get(0);
-        boolean userIsAuthor = true;
-        if (!user.isAdminCompany() && !userIsAuthor) {
+        var userIsAuthor = Objects.equals(data.getAuthor(), user);
+        if (!user.isAdmin() || !userIsAuthor) {
             return "redirect:/main";
         }
         if (data.getFilename().length() > 0) {
