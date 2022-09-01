@@ -54,56 +54,12 @@ class MainController {
         return "main";
     }
 
-//    @PostMapping("/main")
-//    public String add(
-//            @RequestParam("file") MultipartFile uploadData,
-//            @RequestParam String name,
-//            @RequestParam String fileDesc,
-//            @RequestParam String codeName,
-//            @RequestParam String OKCcode,
-//            @RequestParam String OKPDcode,
-//            @RequestParam String adoptionDate,
-//            @RequestParam String introductionDate,
-//            @RequestParam String developer,
-//            @RequestParam String predecessor,
-//            @RequestParam String contents,
-//            @RequestParam String levelOfAcceptance,
-//            @RequestParam String changes,
-//            @RequestParam String status,
-//            @RequestParam String referencesAmount,
-//            @AuthenticationPrincipal User user, Map<String, Object> model) throws IOException {
-//        Data data = new Data(
-//                name,
-//                fileDesc,
-//                user,
-//                codeName,
-//                OKCcode,
-//                OKPDcode,
-//                adoptionDate,
-//                introductionDate,
-//                developer,
-//                predecessor,
-//                contents,
-//                levelOfAcceptance,
-//                changes,
-//                status,
-//                referencesAmount
-//        );
-//        if (uploadData != null && !uploadData.getOriginalFilename().isEmpty()) {
-//            File uploadFolder = new File(uploadPath);
-//            if (!uploadFolder.exists()) {
-//                uploadFolder.mkdir();
-//            }
-//            String uuidFile = UUID.randomUUID().toString();
-//            String resultFileName = uuidFile + "." + uploadData.getOriginalFilename();
-//            uploadData.transferTo(new File(uploadPath + "/" + resultFileName));
-//            data.setFilename(resultFileName);
-//        }
-//        fileRepo.save(data);
-//        Iterable<Data> messages = fileRepo.findAll();
-//        model.put("messages", messages);
-//        return "main";
-//    }
+    @GetMapping("/archived")
+    public String archived(
+            Map<String, Object> model) {
+        model.put("messages", fileRepo.findByArchived(true));
+        return "archived_docs";
+    }
 
     private String li(String str) {
         return '%' + str + '%';

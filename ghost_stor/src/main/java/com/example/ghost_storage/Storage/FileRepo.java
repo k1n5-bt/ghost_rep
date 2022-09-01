@@ -8,11 +8,8 @@ import java.util.List;
 
 public interface FileRepo extends JpaRepository<Data, Long> {
     List<Data> findByNameLike(String name);
-    List<Data> findByFileDescLike(String fileDesc);
-    List<Data> findByAuthorAndNameLike(User user, String name);
-    List<Data> findByAuthorAndFileDescLike(User user, String fileDesc);
-    List<Data> findByAuthor(User user);
     List<Data> findById(int id);
+    List<Data> findByArchived(boolean archived);
     List<Data> findByStateId(int stateId);
 
     List<Data> findByFileDescLikeAndNameLike(String fileDesc, String name);

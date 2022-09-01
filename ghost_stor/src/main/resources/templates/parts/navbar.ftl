@@ -24,6 +24,12 @@
                     <li class="nav-item">
                         <a class="nav-link" aria-current="page" href="/user">Панель администратора</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/document">Новый документ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/archived">Архив</a>
+                    </li>
                 </#if>
             </ul>
             <div class="navbar-text me-3">${name}</div>
