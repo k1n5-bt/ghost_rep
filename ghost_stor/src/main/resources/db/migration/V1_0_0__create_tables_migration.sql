@@ -47,6 +47,7 @@ create table data
     predecessor_second_redaction         varchar(255),
     references_amount_second_redaction   varchar(255),
     status_second_redaction              varchar(255),
+    state_id                             int4,
     user_id             int8,
     primary key (id)
 );
