@@ -44,21 +44,12 @@ class MainController {
             @RequestParam(defaultValue = "") String descFilter,
             @RequestParam(defaultValue = "") String nameFilter,
             Map<String, Object> model) {
-//        Iterable<Data> messages = fileRepo.findByFileDescLikeAndNameLike(li(descFilter), li(nameFilter));
         Iterable<Data> messages = fileRepo.findByStateId(Data.State.ACTIVE.getValue());
         model.put("messages", messages);
         model.put("formAction", "/main");
         model.put("descFilter", descFilter);
         model.put("nameFilter", nameFilter);
-
         return "main";
-    }
-
-    @GetMapping("/archived")
-    public String archived(
-            Map<String, Object> model) {
-        model.put("messages", fileRepo.findByArchived(true));
-        return "archived_docs";
     }
 
     private String li(String str) {

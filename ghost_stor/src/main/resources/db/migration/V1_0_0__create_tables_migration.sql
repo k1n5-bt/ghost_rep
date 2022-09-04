@@ -16,7 +16,6 @@ create table data
     name                varchar(255),
     predecessor         varchar(255),
     status              varchar(255),
-    archived            boolean not null,
     okccode_first_redaction             varchar(255),
     okpdcode_first_redaction            varchar(255),
     adoption_date_first_redaction       varchar(255),

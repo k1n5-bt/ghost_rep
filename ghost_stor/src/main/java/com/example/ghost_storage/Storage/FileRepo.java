@@ -9,7 +9,7 @@ import java.util.List;
 public interface FileRepo extends JpaRepository<Data, Long> {
     List<Data> findByNameLike(String name);
     List<Data> findById(int id);
-    List<Data> findByArchived(boolean archived);
+//    List<Data> findByArchived(boolean archived);
     List<Data> findByStateId(int stateId);
 
     List<Data> findByFileDescLikeAndNameLike(String fileDesc, String name);

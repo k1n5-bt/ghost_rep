@@ -16,10 +16,6 @@
                         <#if message.filename != "">
                             <a href="/files/${message.filename}" download>Скачать</a><br>
                         </#if>
-                        <#if isAdmin>
-                            <a href="/delete/${message.id}">Удалить</a><br>
-                            <a href="/document/${message.id}/edit">Редактировать</a>
-                        </#if>
                     </div>
                 </div>
             </div>

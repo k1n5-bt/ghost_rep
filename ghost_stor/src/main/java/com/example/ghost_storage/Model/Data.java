@@ -143,7 +143,6 @@ public class Data {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Integer id;
-    private Boolean archivated = false;
     private String name;
     private String fileDesc;
     @ManyToOne(fetch = FetchType.EAGER)
@@ -209,11 +208,12 @@ public class Data {
     private String statusFirstRedaction;
 
     public boolean getArchivalStatus() {
-        return archivated;
+//        return archivated;
+        return false;
     }
 
     public void setArchived() {
-        this.archivated = true;
+//        this.archivated = true;
     }
 
     public String getNameFirstRedaction() {

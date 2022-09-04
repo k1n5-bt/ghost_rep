@@ -41,7 +41,7 @@ public class MyDocumentsController {
         model.put("descFilter", descFilter);
         model.put("nameFilter", nameFilter);
 
-        return "main";
+        return "archived_docs";
     }
 
     @GetMapping("/document/{documentId}")
@@ -68,7 +68,8 @@ public class MyDocumentsController {
             Map<String, Object> model) throws FileNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         Data file = fileRepo.findById(Integer.parseInt(documentId)).get(0);
         Map<String, String[]> fields = file.getAllValues();
-        if (!file.getArchivalStatus())
+
+        if (file.getState() != Data.State.CANCELED)
             return ResponseEntity.status(HttpStatus.NOT_FOUND).toString();
         model.put("document", file);
         model.put("fileName", Data.fieldNames());
@@ -146,9 +147,9 @@ public class MyDocumentsController {
         List<Data> docs = fileRepo.findById(Integer.parseInt(documentId));
         if (docs.size() > 0) {
             Data file = docs.get(0);
-            file.setArchived();
+            file.setState(Data.State.CANCELED);
             fileRepo.save(file);
-            return "redirect:/archived";
+            return "redirect:/archive";
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).toString();
         }
