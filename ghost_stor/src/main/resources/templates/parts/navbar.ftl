@@ -14,15 +14,15 @@
                 <li class="nav-item">
                     <a class="nav-link" aria-current="page" href="/main">Документы</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="/document">Новый документ</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="/archive">Архив</a>
-                </li>
                 <#if isAdmin>
                     <li class="nav-item">
                         <a class="nav-link" aria-current="page" href="/user">Панель администратора</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/document">Новый документ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/archive">Архив</a>
                     </li>
                 </#if>
             </ul>

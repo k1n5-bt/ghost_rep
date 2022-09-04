@@ -13,10 +13,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 import static com.example.ghost_storage.Model.Data.maxFieldNames;
 
@@ -91,25 +88,18 @@ public class DataService {
     }
 
     public void setLastName(Data file, String fieldName, String value) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        Object obj = file.getClass().getMethod("get" + maxFieldNames().get(fieldName) + "SecondRedaction").invoke(file);
+        Object obj = file.getClass().getMethod("get" + maxFieldNames().get(fieldName) + "FirstRedaction").invoke(file);
         if (obj == null) {
-            obj = file.getClass().getMethod("get" + maxFieldNames().get(fieldName) + "FirstRedaction").invoke(file);
+            obj = file.getClass().getMethod("get" + maxFieldNames().get(fieldName)).invoke(file);
             if (obj == null) {
-                obj = file.getClass().getMethod("get" + maxFieldNames().get(fieldName)).invoke(file);
-                if (obj == null) {
-                    file.getClass().getMethod("set" + maxFieldNames().get(fieldName), value.getClass()).invoke(file, value);
-                } else {
-                    file.getClass().getMethod("set" + maxFieldNames().get(fieldName) + "FirstRedaction", value.getClass()).invoke(file, value);
-                }
+                file.getClass().getMethod("set" + maxFieldNames().get(fieldName), value.getClass()).invoke(file, value);
             } else {
-                file.getClass().getMethod("set" + maxFieldNames().get(fieldName) + "SecondRedaction", value.getClass()).invoke(file, value);
+                file.getClass().getMethod("set" + maxFieldNames().get(fieldName) + "FirstRedaction", value.getClass()).invoke(file, value);
             }
         } else {
             String value2 = file.getClass().getMethod("get" + maxFieldNames().get(fieldName) + "FirstRedaction").invoke(file).toString();
-            String value3 = file.getClass().getMethod("get" + maxFieldNames().get(fieldName) + "SecondRedaction").invoke(file).toString();
             file.getClass().getMethod("set" + maxFieldNames().get(fieldName), value2.getClass()).invoke(file, value2);
-            file.getClass().getMethod("set" + maxFieldNames().get(fieldName) + "FirstRedaction", value3.getClass()).invoke(file, value3);
-            file.getClass().getMethod("set" + maxFieldNames().get(fieldName) + "SecondRedaction", value.getClass()).invoke(file, value);
+            file.getClass().getMethod("set" + maxFieldNames().get(fieldName) + "FirstRedaction", value.getClass()).invoke(file, value);
         }
     }
 
@@ -132,8 +122,7 @@ public class DataService {
 
     public List<Data> getArchiveData(){
         List<Data> canceledData = fileRepo.findByStateId(Data.State.CANCELED.getValue());
-        List<Data> replacedData = fileRepo.findByStateId(Data.State.REPLACED.getValue());
-        replacedData.addAll(canceledData);
-        return replacedData;
+//        replacedData.addAll(canceledData);
+        return canceledData;
     }
 }

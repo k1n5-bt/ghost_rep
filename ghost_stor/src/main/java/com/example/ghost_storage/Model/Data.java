@@ -1,5 +1,7 @@
 package com.example.ghost_storage.Model;
 
+import com.example.ghost_storage.Storage.FileRepo;
+
 import javax.persistence.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -28,10 +30,7 @@ public class Data {
             Object obj2 = this.getClass().getMethod("get" + maxFieldNames().get(str) + "FirstRedaction").invoke(this);
             String value2 = obj2 != null ? obj2.toString() : "";
 
-            Object obj3 = this.getClass().getMethod("get" + maxFieldNames().get(str) + "SecondRedaction").invoke(this);
-            String value3 = obj3 != null ? obj3.toString() : "";
-
-            dict.put(str, new String[] {value1, value2, value3});
+            dict.put(str, new String[] {value1, value2});
         }
         return dict;
     }
@@ -40,12 +39,9 @@ public class Data {
         Map<String, String> dict = new HashMap<String, String>();
         for (String str : fieldNames())
         {
-            Object obj = this.getClass().getMethod("get" + maxFieldNames().get(str) + "SecondRedaction").invoke(this);
+            Object obj = this.getClass().getMethod("get" + maxFieldNames().get(str) + "FirstRedaction").invoke(this);
             if (obj == null) {
-                obj = this.getClass().getMethod("get" + maxFieldNames().get(str) + "FirstRedaction").invoke(this);
-                if (obj == null) {
-                    obj = this.getClass().getMethod("get" + maxFieldNames().get(str)).invoke(this);
-                }
+                obj = this.getClass().getMethod("get" + maxFieldNames().get(str)).invoke(this);
             }
             String value = obj != null ? obj.toString() : "";
             dict.put(str, value);
@@ -70,7 +66,6 @@ public class Data {
         this.levelOfAcceptance = levelOfAcceptance;
         this.changes = changes;
         this.status = status;
-        this.referencesAmount = referencesAmount;
     }
 
     public static String[] fieldNames() {
@@ -86,8 +81,7 @@ public class Data {
                 "contents",
                 "levelOfAcceptance",
                 "changes",
-                "status",
-                "referencesAmount"
+                "status"
         };
         return arr;
     }
@@ -106,7 +100,6 @@ public class Data {
             put("levelOfAcceptance", "Уровень принятия");
             put("changes", "Изменения");
             put("status", "Статус документа");
-            put("referencesAmount", "Количество обращений");
         }};
         return map;
     }
@@ -125,7 +118,6 @@ public class Data {
             put("levelOfAcceptance", "LevelOfAcceptance");
             put("changes", "Changes");
             put("status", "Status");
-            put("referencesAmount", "ReferencesAmount");
         }};
         return map;
     }
@@ -144,7 +136,6 @@ public class Data {
             put("levelOfAcceptance", "");
             put("changes", "");
             put("status", "");
-            put("referencesAmount", "");
         }};
         return map;
     }
@@ -203,7 +194,6 @@ public class Data {
     private String levelOfAcceptance;
     private String changes;
     private String status;
-    private String referencesAmount;
     private String nameFirstRedaction;
     private String fileDescFirstRedaction;
     private String OKCcodeFirstRedaction;
@@ -216,20 +206,15 @@ public class Data {
     private String levelOfAcceptanceFirstRedaction;
     private String changesFirstRedaction;
     private String statusFirstRedaction;
-    private String referencesAmountFirstRedaction;
-    private String nameSecondRedaction;
-    private String fileDescSecondRedaction;
-    private String OKCcodeSecondRedaction;
-    private String OKPDcodeSecondRedaction;
-    private String adoptionDateSecondRedaction;
-    private String introductionDateSecondRedaction;
-    private String developerSecondRedaction;
-    private String predecessorSecondRedaction;
-    private String contentsSecondRedaction;
-    private String levelOfAcceptanceSecondRedaction;
-    private String changesSecondRedaction;
-    private String statusSecondRedaction;
-    private String referencesAmountSecondRedaction;
+
+    public boolean getArchivalStatus() {
+//        return archivated;
+        return false;
+    }
+
+    public void setArchived() {
+//        this.archivated = true;
+    }
 
     public String getNameFirstRedaction() {
         return nameFirstRedaction;
@@ -325,118 +310,6 @@ public class Data {
 
     public void setStatusFirstRedaction(String statusFirstRedaction) {
         this.statusFirstRedaction = statusFirstRedaction;
-    }
-
-    public String getReferencesAmountFirstRedaction() {
-        return referencesAmountFirstRedaction;
-    }
-
-    public void setReferencesAmountFirstRedaction(String referencesAmountFirstRedaction) {
-        this.referencesAmountFirstRedaction = referencesAmountFirstRedaction;
-    }
-
-    public String getNameSecondRedaction() {
-        return nameSecondRedaction;
-    }
-
-    public void setNameSecondRedaction(String nameSecondRedaction) {
-        this.nameSecondRedaction = nameSecondRedaction;
-    }
-
-    public String getFileDescSecondRedaction() {
-        return fileDescSecondRedaction;
-    }
-
-    public void setFileDescSecondRedaction(String fileDescSecondRedaction) {
-        this.fileDescSecondRedaction = fileDescSecondRedaction;
-    }
-
-    public String getOKCcodeSecondRedaction() {
-        return OKCcodeSecondRedaction;
-    }
-
-    public void setOKCcodeSecondRedaction(String OKCcodeSecondRedaction) {
-        this.OKCcodeSecondRedaction = OKCcodeSecondRedaction;
-    }
-
-    public String getOKPDcodeSecondRedaction() {
-        return OKPDcodeSecondRedaction;
-    }
-
-    public void setOKPDcodeSecondRedaction(String OKPDcodeSecondRedaction) {
-        this.OKPDcodeSecondRedaction = OKPDcodeSecondRedaction;
-    }
-
-    public String getAdoptionDateSecondRedaction() {
-        return adoptionDateSecondRedaction;
-    }
-
-    public void setAdoptionDateSecondRedaction(String adoptionDateSecondRedaction) {
-        this.adoptionDateSecondRedaction = adoptionDateSecondRedaction;
-    }
-
-    public String getIntroductionDateSecondRedaction() {
-        return introductionDateSecondRedaction;
-    }
-
-    public void setIntroductionDateSecondRedaction(String introductionDateSecondRedaction) {
-        this.introductionDateSecondRedaction = introductionDateSecondRedaction;
-    }
-
-    public String getDeveloperSecondRedaction() {
-        return developerSecondRedaction;
-    }
-
-    public void setDeveloperSecondRedaction(String developerSecondRedaction) {
-        this.developerSecondRedaction = developerSecondRedaction;
-    }
-
-    public String getPredecessorSecondRedaction() {
-        return predecessorSecondRedaction;
-    }
-
-    public void setPredecessorSecondRedaction(String predecessorSecondRedaction) {
-        this.predecessorSecondRedaction = predecessorSecondRedaction;
-    }
-
-    public String getContentsSecondRedaction() {
-        return contentsSecondRedaction;
-    }
-
-    public void setContentsSecondRedaction(String contentsSecondRedaction) {
-        this.contentsSecondRedaction = contentsSecondRedaction;
-    }
-
-    public String getLevelOfAcceptanceSecondRedaction() {
-        return levelOfAcceptanceSecondRedaction;
-    }
-
-    public void setLevelOfAcceptanceSecondRedaction(String levelOfAcceptanceSecondRedaction) {
-        this.levelOfAcceptanceSecondRedaction = levelOfAcceptanceSecondRedaction;
-    }
-
-    public String getChangesSecondRedaction() {
-        return changesSecondRedaction;
-    }
-
-    public void setChangesSecondRedaction(String changesSecondRedaction) {
-        this.changesSecondRedaction = changesSecondRedaction;
-    }
-
-    public String getStatusSecondRedaction() {
-        return statusSecondRedaction;
-    }
-
-    public void setStatusSecondRedaction(String statusSecondRedaction) {
-        this.statusSecondRedaction = statusSecondRedaction;
-    }
-
-    public String getReferencesAmountSecondRedaction() {
-        return referencesAmountSecondRedaction;
-    }
-
-    public void setReferencesAmountSecondRedaction(String referencesAmountSecondRedaction) {
-        this.referencesAmountSecondRedaction = referencesAmountSecondRedaction;
     }
 
     public String getAuthorName() {
@@ -561,13 +434,5 @@ public class Data {
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    public String getReferencesAmount() {
-        return referencesAmount;
-    }
-
-    public void setReferencesAmount(String referencesAmount) {
-        this.referencesAmount = referencesAmount;
     }
 }

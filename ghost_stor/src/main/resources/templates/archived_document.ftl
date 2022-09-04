@@ -3,9 +3,6 @@
 
 <@c.page>
     <#if isAdmin>
-        <a href="/document/${document.id}/edit">Изменить</a><br>
-        <a href="/document/${document.id}/edit">Заменить</a><br>
-        <a href="/document/${document.id}/archive">Отменить</a><br>
         <a href="/delete/${document.id}">Удалить полностью</a><br>
     </#if>
     <#if document.filename != "">
