@@ -85,6 +85,7 @@ public class MyDocumentsController {
             Map<String, Object> model) throws IOException {
         model.put("fieldNames", Data.fieldNames());
         model.put("ruFieldNames", Data.ruFieldNames());
+        model.put("levels", Data.acceptanceLevels());
         return "document_form";
     }
 
@@ -106,6 +107,7 @@ public class MyDocumentsController {
             Data file = docs.get(0);
             Map<String, String> lastFields = file.getLastValues();
             model.put("document", file);
+            model.put("levels", Data.acceptanceLevels());
             model.put("lastFields", lastFields);
             model.put("fieldNames", Data.fieldNames());
             model.put("ruFieldNames", Data.ruFieldNames());

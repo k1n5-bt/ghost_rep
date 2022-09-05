@@ -160,6 +160,17 @@ public class Data {
         return map;
     }
 
+    public static Map<String, String> acceptanceLevels() {
+        Map<String, String> map  = new HashMap<>() {{
+            put("", "");
+            put("a", "Международный");
+            put("b", "Иностранный");
+            put("c", "Стандарт организации");
+            put("d", "Национальный/межгосударственный");
+        }};
+        return map;
+    }
+
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Integer id;

@@ -2,7 +2,7 @@
 <#include "parts/security.ftl">
 
 <@c.page>
-        <form method="post" enctype="multipart/form-data">
+        <form method="post" enctype="multipart/form-data" id="form">
             <table class="table">
                 <tr>
                     <th>Поле</th>
@@ -12,9 +12,29 @@
                     <tr>
                         <td>${ruFieldNames[key]}</td>
                         <td>
-                            <input class="form-control" type="text" name=${key} id=${key} placeholder="..."
-                                    <#if lastFields??> value="${lastFields[key]}" </#if>
-                            >
+                            <#if key == "levelOfAcceptance">
+                                <select name="levelOfAcceptance">
+                                    <#list levels?keys as level>
+                                        <option value="${level}" <#if lastFields[key] == level>selected</#if>>
+                                            ${levels[level]}
+                                        </option>
+                                    </#list>
+                                </select>
+                            <#elseif key == "fileDesc">
+                                <input class="form-control" type="text" name=${key} id=${key} required placeholder="..."
+                                        <#if lastFields??> value="${lastFields[key]}" </#if>
+                                >
+                            <#elseif key == "adoptionDate" || key == "introductionDate">
+                                <input class="form-control" type="date" name=${key} id=${key} placeholder="..."
+                                        <#if lastFields??> value="${lastFields[key]}" </#if>
+                                >
+                            <#elseif key == "headContent" || key == "keywords" || key == "keyPhrases">
+                                <textarea name=${key} id=${key} form="form"><#if lastFields??>${lastFields[key]}</#if></textarea>
+                            <#else>
+                                <input class="form-control" type="text" name=${key} id=${key} placeholder="..."
+                                        <#if lastFields??> value="${lastFields[key]}" </#if>
+                                >
+                            </#if>
                         </td>
                     </tr>
                 </#list>
