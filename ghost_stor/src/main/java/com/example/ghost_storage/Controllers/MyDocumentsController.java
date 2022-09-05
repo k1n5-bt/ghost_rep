@@ -164,7 +164,7 @@ public class MyDocumentsController {
         List<Data> docs = fileRepo.findById(Integer.parseInt(documentId));
         if (docs.size() > 0) {
             Data file = docs.get(0);
-            if (file.getArchivalStatus())
+            if (file.getState() == Data.State.CANCELED)
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).toString();
 
 

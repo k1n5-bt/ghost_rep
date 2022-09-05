@@ -53,34 +53,39 @@ public class Data {
         setState(State.ACTIVE);
     }
 
-    public Data(String name, String fileDesc, String OKCcode, String OKPDcode, String adoptionDate, String introductionDate, String developer, String predecessor, String contents, String levelOfAcceptance, String changes, String status, String referencesAmount) {
-        this.name = name;
-        this.fileDesc = fileDesc;
-        this.OKCcode = OKCcode;
-        this.OKPDcode = OKPDcode;
-        this.adoptionDate = adoptionDate;
-        this.introductionDate = introductionDate;
-        this.developer = developer;
-        this.predecessor = predecessor;
-        this.contents = contents;
-        this.levelOfAcceptance = levelOfAcceptance;
-        this.changes = changes;
-        this.status = status;
-    }
+//    public Data(String name, String fileDesc, String OKCcode, String OKPDcode, String adoptionDate, String introductionDate, String developer, String predecessor, String contents, String levelOfAcceptance, String changes, String status, String referencesAmount) {
+//        this.name = name;
+//        this.fileDesc = fileDesc;
+//        this.OKCcode = OKCcode;
+//        this.OKPDcode = OKPDcode;
+//        this.adoptionDate = adoptionDate;
+//        this.introductionDate = introductionDate;
+//        this.developer = developer;
+//        this.predecessor = predecessor;
+//        this.contents = contents;
+//        this.levelOfAcceptance = levelOfAcceptance;
+//        this.changes = changes;
+//        this.status = status;
+//    }
 
     public static String[] fieldNames() {
         String[] arr = {
-                "name",
                 "fileDesc",
+                "name",
                 "OKCcode",
                 "OKPDcode",
                 "adoptionDate",
                 "introductionDate",
                 "developer",
                 "predecessor",
-                "contents",
+                "headContent",
+                "keywords",
+                "keyPhrases",
                 "levelOfAcceptance",
+                "contents",
+                "normReferences",
                 "changes",
+                "modifications",
                 "status"
         };
         return arr;
@@ -88,8 +93,8 @@ public class Data {
 
     public static Map<String, String> ruFieldNames() {
         Map<String, String> map  = new HashMap<>() {{
-            put("name", "Название документа");
-            put("fileDesc", "Описание документа");
+            put("name", "Наименование стандарта");
+            put("fileDesc", "Обозначение стандарта");
             put("OKCcode", "Код ОКС");
             put("OKPDcode", "Код ОКПД 2");
             put("adoptionDate", "Дата принятия");
@@ -99,7 +104,12 @@ public class Data {
             put("contents", "Текст документа");
             put("levelOfAcceptance", "Уровень принятия");
             put("changes", "Изменения");
-            put("status", "Статус документа");
+            put("status", "Действующий/отменен/заменен");
+            put("headContent", "Содержание");
+            put("keywords", "Ключевые слова");
+            put("keyPhrases", "Ключевые фразы");
+            put("normReferences", "Нормативные ссылки");
+            put("modifications", "Поправки");
         }};
         return map;
     }
@@ -118,6 +128,11 @@ public class Data {
             put("levelOfAcceptance", "LevelOfAcceptance");
             put("changes", "Changes");
             put("status", "Status");
+            put("headContent", "HeadContent");
+            put("keywords", "Keywords");
+            put("keyPhrases", "KeyPhrases");
+            put("normReferences", "NormReferences");
+            put("modifications", "Modifications");
         }};
         return map;
     }
@@ -136,6 +151,11 @@ public class Data {
             put("levelOfAcceptance", "");
             put("changes", "");
             put("status", "");
+            put("headContent", "");
+            put("keywords", "");
+            put("keyPhrases", "");
+            put("normReferences", "");
+            put("modifications", "");
         }};
         return map;
     }
@@ -206,14 +226,94 @@ public class Data {
     private String levelOfAcceptanceFirstRedaction;
     private String changesFirstRedaction;
     private String statusFirstRedaction;
-
-    public boolean getArchivalStatus() {
-//        return archivated;
-        return false;
+    private String headContent;
+    private String keywords;
+    private String keyPhrases;
+    private String normReferences;
+    private String modifications;
+    private String headContentFirstRedaction;
+    private String keywordsFirstRedaction;
+    private String keyPhrasesFirstRedaction;
+    private String normReferencesFirstRedaction;
+    private String modificationsFirstRedaction;
+    public String getHeadContent() {
+        return headContent;
     }
 
-    public void setArchived() {
-//        this.archivated = true;
+    public void setHeadContent(String headContent) {
+        this.headContent = headContent;
+    }
+
+    public String getKeywords() {
+        return keywords;
+    }
+
+    public void setKeywords(String keywords) {
+        this.keywords = keywords;
+    }
+
+    public String getKeyPhrases() {
+        return keyPhrases;
+    }
+
+    public void setKeyPhrases(String keyPhrases) {
+        this.keyPhrases = keyPhrases;
+    }
+
+    public String getNormReferences() {
+        return normReferences;
+    }
+
+    public void setNormReferences(String normReferences) {
+        this.normReferences = normReferences;
+    }
+
+    public String getModifications() {
+        return modifications;
+    }
+
+    public void setModifications(String modifications) {
+        this.modifications = modifications;
+    }
+
+    public String getHeadContentFirstRedaction() {
+        return headContentFirstRedaction;
+    }
+
+    public void setHeadContentFirstRedaction(String headContentFirstRedaction) {
+        this.headContentFirstRedaction = headContentFirstRedaction;
+    }
+
+    public String getKeywordsFirstRedaction() {
+        return keywordsFirstRedaction;
+    }
+
+    public void setKeywordsFirstRedaction(String keywordsFirstRedaction) {
+        this.keywordsFirstRedaction = keywordsFirstRedaction;
+    }
+
+    public String getKeyPhrasesFirstRedaction() {
+        return keyPhrasesFirstRedaction;
+    }
+
+    public void setKeyPhrasesFirstRedaction(String keyPhrasesFirstRedaction) {
+        this.keyPhrasesFirstRedaction = keyPhrasesFirstRedaction;
+    }
+
+    public String getNormReferencesFirstRedaction() {
+        return normReferencesFirstRedaction;
+    }
+
+    public void setNormReferencesFirstRedaction(String normReferencesFirstRedaction) {
+        this.normReferencesFirstRedaction = normReferencesFirstRedaction;
+    }
+
+    public String getModificationsFirstRedaction() {
+        return modificationsFirstRedaction;
+    }
+
+    public void setModificationsFirstRedaction(String modificationsFirstRedaction) {
+        this.modificationsFirstRedaction = modificationsFirstRedaction;
     }
 
     public String getNameFirstRedaction() {
