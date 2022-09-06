@@ -53,7 +53,7 @@ public class MyDocumentsController {
         Map<String, String[]> fields = file.getAllValues();
         model.put("document", file);
         model.put("fileName", Data.fieldNames());
-
+        model.put("levels", Data.acceptanceLevels());
         model.put("fields", fields);
         model.put("fieldNames", file.fieldNames());
         model.put("ruFieldNames", file.ruFieldNames());

@@ -15,23 +15,23 @@
                             <#if key == "levelOfAcceptance">
                                 <select name="levelOfAcceptance">
                                     <#list levels?keys as level>
-                                        <option value="${level}" <#if lastFields[key] == level>selected</#if>>
+                                        <option value="${level}" <#if lastFields?? && lastFields[key] == level>selected</#if>>
                                             ${levels[level]}
                                         </option>
                                     </#list>
                                 </select>
                             <#elseif key == "fileDesc">
-                                <input class="form-control" type="text" name=${key} id=${key} required placeholder="..."
+                                <input class="form-control" type="text" name=${key} id=${key} required
                                         <#if lastFields??> value="${lastFields[key]}" </#if>
                                 >
                             <#elseif key == "adoptionDate" || key == "introductionDate">
-                                <input class="form-control" type="date" name=${key} id=${key} placeholder="..."
+                                <input class="form-control" type="date" name=${key} id=${key}
                                         <#if lastFields??> value="${lastFields[key]}" </#if>
                                 >
                             <#elseif key == "headContent" || key == "keywords" || key == "keyPhrases">
                                 <textarea name=${key} id=${key} form="form"><#if lastFields??>${lastFields[key]}</#if></textarea>
                             <#else>
-                                <input class="form-control" type="text" name=${key} id=${key} placeholder="..."
+                                <input class="form-control" type="text" name=${key} id=${key}
                                         <#if lastFields??> value="${lastFields[key]}" </#if>
                                 >
                             </#if>

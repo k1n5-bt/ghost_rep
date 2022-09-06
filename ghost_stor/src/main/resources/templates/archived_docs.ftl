@@ -9,11 +9,8 @@
                     <img class="card-img-top" src="/static/doc.png">
                     <div class="m-2">
                         <span>
-                            <a href="/archived_doc/${message.id}" class="dock_link">${message.name}</a>
+                            <a href="/archived_doc/${message.id}" class="dock_link">${message.fileDesc}</a>
                         </span><br>
-                        <#if message.filename != "">
-                            <a href="/files/${message.filename}" download>Скачать</a><br>
-                        </#if>
                     </div>
                 </div>
             </div>
