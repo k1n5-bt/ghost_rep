@@ -33,12 +33,16 @@ public class DataService {
         Data doc = new Data();
         Map<String, String> emptyValues = doc.emptyFieldValues();
         for (String fieldName : Data.fieldNames()) {
-            String newValue = params.get(fieldName);
-            String oldValue = emptyValues.get(fieldName);
-            if (!newValue.equals(oldValue)) {
-                setLastName(doc, fieldName, newValue);
+            if (!fieldName.equals("normReferences")) {
+                String newValue = params.get(fieldName);
+                String oldValue = emptyValues.get(fieldName);
+                if (!newValue.equals(oldValue)) {
+                    setLastName(doc, fieldName, newValue);
+                }
             }
         }
+
+        saveLinks(doc, params);
 
         if (file != null && !file.getOriginalFilename().isEmpty()) {
             String resultFileName = createFile(file);
@@ -46,6 +50,26 @@ public class DataService {
         }
         fileRepo.save(doc);
         return doc;
+    }
+
+    public void saveLinks(Data file, Map<String, String> params) {
+        Map<String, Integer> descs = this.getGhostDesc();
+        List<Integer> activeLinksIds = new ArrayList<>();
+        List<String> inactiveLinks = new ArrayList<>();
+
+        for (String key : params.keySet().toArray(new String[0])) {
+            if (key.matches("normReferences.+")) {
+                if (!params.get(key).equals("")) {
+                    if (descs.containsKey(params.get(key))) {
+                        activeLinksIds.add(descs.get(params.get(key)));
+                    } else {
+                        inactiveLinks.add(params.get(key));
+                    }
+                }
+            }
+        }
+        file.setActiveLinks(activeLinksIds);
+        file.setInactiveLinks(inactiveLinks);
     }
 
     public Data updateDoc(String documentId, MultipartFile file, Map<String, String> params) throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException, NotFoundException {
@@ -65,11 +89,13 @@ public class DataService {
         Map<String, String> lastValues = doc.getLastValues();
 
         for (String fieldName : Data.fieldNames()) {
-            String newValue = params.get(fieldName);
-            String oldValue = lastValues.get(fieldName);
+            if (!fieldName.equals("normReferences")) {
+                String newValue = params.get(fieldName);
+                String oldValue = lastValues.get(fieldName);
 
-            if (!newValue.equals(oldValue)) {
-                setLastName(doc, fieldName, newValue);
+                if (!newValue.equals(oldValue)) {
+                    setLastName(doc, fieldName, newValue);
+                }
             }
         }
         fileRepo.save(doc);
@@ -124,5 +150,14 @@ public class DataService {
         List<Data> canceledData = fileRepo.findByStateId(Data.State.CANCELED.getValue());
 //        replacedData.addAll(canceledData);
         return canceledData;
+    }
+
+    public Map<String, Integer> getGhostDesc() {
+        List<Data> files = fileRepo.findByStateId(Data.State.ACTIVE.getValue());
+        Map<String, Integer> dict = new HashMap<>();
+        for (Data file : files) {
+            dict.put(file.getFileDesc(), file.getId());
+        }
+        return  dict;
     }
 }

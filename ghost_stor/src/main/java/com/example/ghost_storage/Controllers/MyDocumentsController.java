@@ -50,6 +50,10 @@ public class MyDocumentsController {
             @AuthenticationPrincipal User user,
             Map<String, Object> model) throws FileNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         Data file = fileRepo.findById(Integer.parseInt(documentId)).get(0);
+
+        int[] i = file.getActiveLinks();
+        String[] s = file.getInactiveLinks();
+
         Map<String, String[]> fields = file.getAllValues();
         model.put("document", file);
         model.put("fileName", Data.fieldNames());
@@ -86,6 +90,8 @@ public class MyDocumentsController {
         model.put("fieldNames", Data.fieldNames());
         model.put("ruFieldNames", Data.ruFieldNames());
         model.put("levels", Data.acceptanceLevels());
+        model.put("ghostDescs", dataService.getGhostDesc().keySet().toArray(new String[0]));
+
         return "document_form";
     }
 
