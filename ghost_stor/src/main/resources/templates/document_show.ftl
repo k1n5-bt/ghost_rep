@@ -21,8 +21,16 @@
         <#list fieldNames as key>
             <tr>
                 <td>${ruFieldNames[key]}</td>
-                <td>${fields[key][0]}</td>
-                <td>${fields[key][1]}</td>
+                <#if key == "headContent" || key == "keywords" || key == "keyPhrases">
+                    <td><pre style="font-family: inherit;">${fields[key][0]}</pre></td>
+                    <td><pre style="font-family: inherit;">${fields[key][1]}</pre></td>
+                <#elseif key == "levelOfAcceptance">
+                    <td><p style="max-width: 400px; word-break: break-word; margin-bottom: 0px">${levels[fields[key][0]]}</p></td>
+                    <td><p style="max-width: 400px; word-break: break-word; margin-bottom: 0px">${levels[fields[key][1]]}</p></td>
+                <#else>
+                    <td><p style="max-width: 400px; word-break: break-word; margin-bottom: 0px">${fields[key][0]}</p></td>
+                    <td><p style="max-width: 400px; word-break: break-word; margin-bottom: 0px">${fields[key][1]}</p></td>
+                </#if>
             </tr>
         </#list>
     </table>

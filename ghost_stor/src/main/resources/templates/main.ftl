@@ -11,7 +11,7 @@
                     <img class="card-img-top" src="/static/doc.png">
                     <div class="m-2">
                         <span>
-                            <a href="/document/${message.id}" class="dock_link">${message.name}</a>
+                            <a href="/document/${message.id}" class="dock_link">${message.fileDesc}</a>
                         </span><br>
                         <#if message.filename != "">
                             <a href="/files/${message.filename}" download>Скачать</a><br>
