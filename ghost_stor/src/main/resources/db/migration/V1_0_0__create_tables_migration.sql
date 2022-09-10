@@ -48,11 +48,24 @@ create table data
     user_id             int8,
     primary key (id)
 );
+
 create table user_role
 (
     user_id int8 not null,
     roles   varchar(255)
 );
+
+-- таблица с информацией какие госты ссылаются на данный
+-- dataId - id данного госта
+-- referralDataId - id госта с сылкой на данный
+create table ghost_relation
+(
+    id                  int4    not null,
+    data_id             int4,
+    referral_data_id    int4,
+    primary key (id)
+);
+
 create table usr
 (
     id              int8    not null,

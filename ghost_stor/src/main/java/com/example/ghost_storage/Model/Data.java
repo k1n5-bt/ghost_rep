@@ -204,23 +204,6 @@ public class Data {
         }
     };
 
-
-//    public String getNormReferences() {
-//        return normReferences;
-//    }
-//
-//    public void setNormReferences(String normReferences) {
-//        this.normReferences = normReferences;
-//    }
-//
-//    public String getNormReferencesFirstRedaction() {
-//        return normReferencesFirstRedaction;
-//    }
-//
-//    public void setNormReferencesFirstRedaction(String normReferencesFirstRedaction) {
-//        this.normReferencesFirstRedaction = normReferencesFirstRedaction;
-//    }
-
     @Column(name = "STATE_ID")
     private int stateId;
 
@@ -284,7 +267,8 @@ public class Data {
     }
 
     public String[] getInactiveLinks() {
-        return inactiveLinks.split("#");
+        String str = inactiveLinks;
+        return str.equals("") ? new String[0] : str.split("#");
     }
     public void setInactiveLinks(List<String> inactiveLinks) {
         this.inactiveLinks = String.join("#", inactiveLinks);

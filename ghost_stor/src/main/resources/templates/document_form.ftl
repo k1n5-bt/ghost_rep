@@ -32,7 +32,7 @@
                                 <textarea name=${key} id=${key} form="form"><#if lastFields??>${lastFields[key]}</#if></textarea>
                             <#elseif key == "normReferences">
                                 <div class="autocomplete" style="width:200px;" id="normRefBlock">
-                                    <button onclick="createInput()" style='margin-bottom: 10px;'>+</button>
+                                    <button type="button" onclick="createInput('')" style='margin-bottom: 10px;'>+</button>
                                 </div>
                             <#else>
                                 <input class="form-control" type="text" name=${key} id=${key}
@@ -58,7 +58,23 @@
         window.counter = 1;
         let names = [<#list ghostDescs as desc>"${desc}",</#list>];
 
-        function createInput() {
+        <#if activeLinks??>
+            <#list activeLinks?keys as a_link>
+            createInput("${a_link}");
+            </#list>
+        </#if>
+
+        <#if inactiveLinks??>
+            <#list inactiveLinks as ina_link>
+            createInput("${ina_link}");
+            </#list>
+        </#if>
+
+        function poop() {
+            alert("sssssss");
+        }
+
+        function createInput(str_value) {
             let my_block = null;
             let newDiv = null;
             let name = "normReferences_" + window.counter++;
@@ -68,25 +84,22 @@
 
             newDiv.innerHTML = `<input id="` + name +
                 `" type="text" name="` + name +
-                `" placeholder="..." class="form-control">` +
-                `<button onclick='removeInput(this)' style='margin-left: 20px;'>X</button>`;
+                `" placeholder="..." class="form-control" value="` + str_value +
+                `"><button type="button" onclick='removeInput(this)' style='margin-left: 20px;'>X</button>`;
 
             my_block = document.getElementById("normRefBlock");
             my_block.insertAdjacentElement('beforeend', newDiv);
 
             autocomplete(document.getElementById(name), names);
 
-            window.setTimeout(function () {
-                document.getElementById(name).focus();
-            }, 0);
+            // window.setTimeout(function () {
+            //     document.getElementById(name).focus();
+            // }, 0);
         }
 
         function removeInput(el) {
             el.parentElement.remove()
         }
-
-
-
 
         function autocomplete(inp, arr) {
             /*the autocomplete function takes two arguments,
