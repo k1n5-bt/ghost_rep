@@ -68,12 +68,18 @@ create table ghost_relation
 
 create table usr
 (
-    id              int8    not null,
+    id int8 not null,
     activation_code varchar(255),
-    active          boolean not null,
-    email           varchar(255) not null,
-    password        varchar(255) not null,
-    username        varchar(255) not null,
+    active boolean not null,
+    company varchar(255),
+    division varchar(255),
+    email varchar(255),
+    field varchar(255),
+    name varchar(255),
+    password varchar(255),
+    patronymic varchar(255),
+    surname varchar(255),
+    username varchar(255),
     primary key (id)
 );
 alter table if exists data
