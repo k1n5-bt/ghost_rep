@@ -2,6 +2,7 @@ package com.example.ghost_storage.Controllers;
 
 import com.example.ghost_storage.Services.DataService;
 import com.example.ghost_storage.Storage.FileRepo;
+import com.example.ghost_storage.Storage.RelationRepo;
 import javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,10 +24,12 @@ public class MyDocumentsController {
     private final FileRepo fileRepo;
 
     private final DataService dataService;
+    private final RelationRepo relationRepo;
 
-    public MyDocumentsController(FileRepo fileRepo, DataService dataService) {
+    public MyDocumentsController(FileRepo fileRepo, DataService dataService, RelationRepo relationRepo) {
         this.fileRepo = fileRepo;
         this.dataService = dataService;
+        this.relationRepo = relationRepo;
     }
 
     @GetMapping("/archive")
@@ -50,6 +53,8 @@ public class MyDocumentsController {
             @AuthenticationPrincipal User user,
             Map<String, Object> model) throws FileNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         Data file = fileRepo.findById(Integer.parseInt(documentId)).get(0);
+
+
         Map<String, String[]> fields = file.getAllValues();
         model.put("document", file);
         model.put("fileName", Data.fieldNames());
@@ -57,6 +62,10 @@ public class MyDocumentsController {
         model.put("fields", fields);
         model.put("fieldNames", file.fieldNames());
         model.put("ruFieldNames", file.ruFieldNames());
+
+        model.put("activeLinks", dataService.getActiveLinkNames(file));
+        model.put("inactiveLinks", file.getInactiveLinks());
+
         return "document_show";
     }
 
@@ -86,6 +95,8 @@ public class MyDocumentsController {
         model.put("fieldNames", Data.fieldNames());
         model.put("ruFieldNames", Data.ruFieldNames());
         model.put("levels", Data.acceptanceLevels());
+        model.put("ghostDescs", dataService.getGhostDesc().keySet().toArray(new String[0]));
+
         return "document_form";
     }
 
@@ -111,6 +122,10 @@ public class MyDocumentsController {
             model.put("lastFields", lastFields);
             model.put("fieldNames", Data.fieldNames());
             model.put("ruFieldNames", Data.ruFieldNames());
+
+            model.put("ghostDescs", dataService.getGhostDesc().keySet().toArray(new String[0]));
+            model.put("activeLinks", dataService.getActiveLinkNames(file));
+            model.put("inactiveLinks", file.getInactiveLinks());
             return "document_form";
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).toString();
@@ -149,8 +164,7 @@ public class MyDocumentsController {
         List<Data> docs = fileRepo.findById(Integer.parseInt(documentId));
         if (docs.size() > 0) {
             Data file = docs.get(0);
-            file.setState(Data.State.CANCELED);
-            fileRepo.save(file);
+            dataService.archiveDocument(file);
             return "redirect:/archive";
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).toString();

@@ -30,25 +30,42 @@ create table data
     name_first_redaction                varchar(255),
     predecessor_first_redaction         varchar(255),
     status_first_redaction              varchar(255),
-    head_content                        varchar(255),
-    keywords                            varchar(255),
-    key_phrases                         varchar(255),
-    norm_references                     varchar(255),
+    head_content                        text,
+    keywords                            text,
+    key_phrases                         text,
+--     norm_references                     varchar(255),
+    active_links                        varchar(255),
+    inactive_links                      varchar(255),
+    active_links_first_redaction        varchar(255),
+    inactive_links_first_redaction      varchar(255),
     modifications                       varchar(255),
-    head_content_first_redaction        varchar(255),
-    keywords_first_redaction            varchar(255),
-    key_phrases_first_redaction         varchar(255),
+    head_content_first_redaction        text,
+    keywords_first_redaction            text,
+    key_phrases_first_redaction         text,
     norm_references_first_redaction     varchar(255),
     modifications_first_redaction       varchar(255),
-    state_id                             int4,
+    state_id                            int4,
     user_id             int8,
     primary key (id)
 );
+
 create table user_role
 (
     user_id int8 not null,
     roles   varchar(255)
 );
+
+-- таблица с информацией какие госты ссылаются на данный
+-- dataId - id данного госта
+-- referralDataId - id госта с сылкой на данный
+create table ghost_relation
+(
+    id                  int4    not null,
+    data_id             int4,
+    referral_data_id    int4,
+    primary key (id)
+);
+
 create table usr
 (
     id              int8    not null,

@@ -4,9 +4,7 @@ import com.example.ghost_storage.Storage.FileRepo;
 
 import javax.persistence.*;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 public class Data {
@@ -24,13 +22,15 @@ public class Data {
         Map<String, String[]> dict = new HashMap<String, String[]>();
         for (String str : fieldNames())
         {
-            Object obj1 = this.getClass().getMethod("get" + maxFieldNames().get(str)).invoke(this);
-            String value1 = obj1 != null ? obj1.toString() : "";
+            if (!str.equals("normReferences")) {
+                Object obj1 = this.getClass().getMethod("get" + maxFieldNames().get(str)).invoke(this);
+                String value1 = obj1 != null ? obj1.toString() : "";
 
-            Object obj2 = this.getClass().getMethod("get" + maxFieldNames().get(str) + "FirstRedaction").invoke(this);
-            String value2 = obj2 != null ? obj2.toString() : "";
+                Object obj2 = this.getClass().getMethod("get" + maxFieldNames().get(str) + "FirstRedaction").invoke(this);
+                String value2 = obj2 != null ? obj2.toString() : "";
 
-            dict.put(str, new String[] {value1, value2});
+                dict.put(str, new String[] {value1, value2});
+            }
         }
         return dict;
     }
@@ -39,12 +39,14 @@ public class Data {
         Map<String, String> dict = new HashMap<String, String>();
         for (String str : fieldNames())
         {
-            Object obj = this.getClass().getMethod("get" + maxFieldNames().get(str) + "FirstRedaction").invoke(this);
-            if (obj == null) {
-                obj = this.getClass().getMethod("get" + maxFieldNames().get(str)).invoke(this);
+            if (!str.equals("normReferences")) {
+                Object obj = this.getClass().getMethod("get" + maxFieldNames().get(str) + "FirstRedaction").invoke(this);
+                if (obj == null) {
+                    obj = this.getClass().getMethod("get" + maxFieldNames().get(str)).invoke(this);
+                }
+                String value = obj != null ? obj.toString() : "";
+                dict.put(str, value);
             }
-            String value = obj != null ? obj.toString() : "";
-            dict.put(str, value);
         }
         return dict;
     }
@@ -131,7 +133,7 @@ public class Data {
             put("headContent", "HeadContent");
             put("keywords", "Keywords");
             put("keyPhrases", "KeyPhrases");
-            put("normReferences", "NormReferences");
+//            put("normReferences", "NormReferences");
             put("modifications", "Modifications");
         }};
         return map;
@@ -154,7 +156,7 @@ public class Data {
             put("headContent", "");
             put("keywords", "");
             put("keyPhrases", "");
-            put("normReferences", "");
+//            put("normReferences", "");
             put("modifications", "");
         }};
         return map;
@@ -200,7 +202,6 @@ public class Data {
             }
             return state;
         }
-
     };
 
     @Column(name = "STATE_ID")
@@ -240,13 +241,59 @@ public class Data {
     private String headContent;
     private String keywords;
     private String keyPhrases;
-    private String normReferences;
     private String modifications;
     private String headContentFirstRedaction;
     private String keywordsFirstRedaction;
     private String keyPhrasesFirstRedaction;
-    private String normReferencesFirstRedaction;
     private String modificationsFirstRedaction;
+
+
+    private String activeLinks;
+    private String inactiveLinks;
+    private String activeLinksFirstRedaction;
+    private String inactiveLinksFirstRedaction;
+
+    public int[] getActiveLinks() {
+        String strLinksIds = activeLinks;
+        if (!strLinksIds.equals("[]")) {
+            return Arrays.stream(strLinksIds.substring(1, strLinksIds.length()-1).split(","))
+                    .map(String::trim).mapToInt(Integer::parseInt).toArray();
+        } else {
+            return new int[0];
+        }
+    }
+    public void setActiveLinks(List<Integer> activeLinksIds) {
+        this.activeLinks = activeLinksIds.toString();
+    }
+
+    public String[] getInactiveLinks() {
+        String str = inactiveLinks;
+        return str.equals("") ? new String[0] : str.split("#");
+    }
+    public void setInactiveLinks(List<String> inactiveLinks) {
+        this.inactiveLinks = String.join("#", inactiveLinks);
+    }
+
+
+
+    public String getActiveLinksFirstRedaction() {
+        return activeLinksFirstRedaction;
+    }
+    public void setActiveLinksFirstRedaction(String activeLinksFirstRedaction) {
+        this.activeLinksFirstRedaction = activeLinksFirstRedaction;
+    }
+    public String getInactiveLinksFirstRedaction() {
+        return inactiveLinksFirstRedaction;
+    }
+    public void setInactiveLinksFirstRedaction(String inactiveLinksFirstRedaction) {
+        this.inactiveLinksFirstRedaction = inactiveLinksFirstRedaction;
+    }
+
+
+
+    //    private String normReferences;
+    //    private String normReferencesFirstRedaction;
+
     public String getHeadContent() {
         return headContent;
     }
@@ -269,14 +316,6 @@ public class Data {
 
     public void setKeyPhrases(String keyPhrases) {
         this.keyPhrases = keyPhrases;
-    }
-
-    public String getNormReferences() {
-        return normReferences;
-    }
-
-    public void setNormReferences(String normReferences) {
-        this.normReferences = normReferences;
     }
 
     public String getModifications() {
@@ -309,14 +348,6 @@ public class Data {
 
     public void setKeyPhrasesFirstRedaction(String keyPhrasesFirstRedaction) {
         this.keyPhrasesFirstRedaction = keyPhrasesFirstRedaction;
-    }
-
-    public String getNormReferencesFirstRedaction() {
-        return normReferencesFirstRedaction;
-    }
-
-    public void setNormReferencesFirstRedaction(String normReferencesFirstRedaction) {
-        this.normReferencesFirstRedaction = normReferencesFirstRedaction;
     }
 
     public String getModificationsFirstRedaction() {
