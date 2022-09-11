@@ -169,6 +169,38 @@ public class DataService {
         removeRelations(file, removedIds);
     }
 
+    public void archiveDocument(Data doc) {
+        doc.setState(Data.State.CANCELED);
+        fileRepo.save(doc);
+
+        List<GhostRelation> relations = relationRepo.findByDataId(doc.getId());
+        for (GhostRelation relation : relations) {
+            List<Data> files = fileRepo.findById(relation.getReferralDataId());
+            if (files.size() > 0) {
+                Data file = files.get(0);
+                deactivateActiveLink(file, doc.getId(), doc.getFileDesc());
+                fileRepo.save(file);
+            }
+            relationRepo.delete(relation);
+        }
+    }
+
+    public void deactivateActiveLink(Data doc, int linkId, String linkDesc) {
+        int[] oldIds = doc.getActiveLinks();
+        List<Integer> newIds = new ArrayList<>();
+        for (int id : oldIds) {
+            if (id != linkId) {
+                newIds.add(id);
+            }
+        }
+        doc.setActiveLinks(newIds);
+
+        String[] oldDesc = doc.getInactiveLinks();
+        List<String> newDesc = new ArrayList<>(List.of(oldDesc));
+        newDesc.add(linkDesc);
+        doc.setInactiveLinks(newDesc);
+    }
+
     private String createFile(MultipartFile file) throws IOException {
         File uploadFolder = new File(uploadPath);
         if (!uploadFolder.exists()) {

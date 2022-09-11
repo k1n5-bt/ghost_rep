@@ -164,8 +164,7 @@ public class MyDocumentsController {
         List<Data> docs = fileRepo.findById(Integer.parseInt(documentId));
         if (docs.size() > 0) {
             Data file = docs.get(0);
-            file.setState(Data.State.CANCELED);
-            fileRepo.save(file);
+            dataService.archiveDocument(file);
             return "redirect:/archive";
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).toString();
