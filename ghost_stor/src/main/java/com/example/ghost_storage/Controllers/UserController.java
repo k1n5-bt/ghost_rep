@@ -40,9 +40,22 @@ public class UserController {
     @PostMapping
     public String userSave(
             @RequestParam String username,
+            @RequestParam String name,
+            @RequestParam String surname,
+            @RequestParam String patronymic,
+            @RequestParam String field,
+            @RequestParam String division,
+            @RequestParam String company,
             @RequestParam Map<String, String> form,
             @RequestParam("userId") User user) {
-        user.setUsername(username);
+        if (userRepo.findByUsername(username) == null)
+            user.setUsername(username);
+        user.setName(name);
+        user.setSurname(surname);
+        user.setPatronymic(patronymic);
+        user.setField(field);
+        user.setDivision(division);
+        user.setCompany(company);
 
         user.getRoles().clear();
 
