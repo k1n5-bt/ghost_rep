@@ -3,7 +3,9 @@
 
 <@c.page>
     <#if isAdmin>
-        <a href="/delete/${document.id}">Удалить полностью</a><br>
+        <a href="/delete/${document.id}">
+            <button class="btn btn-primary" style="margin: 0 0 10px 0;" onclick="conf()">Удалить полностью</button>
+        </a><br>
     </#if>
     <#if document.filename != "">
         <a href="/files/${document.filename}" target="_blank">Прикрепленный файл</a><br>
@@ -18,9 +20,37 @@
         <#list fieldNames as key>
             <tr>
                 <td>${ruFieldNames[key]}</td>
-                <td>${fields[key][0]}</td>
-                <td>${fields[key][1]}</td>
+                <#if key == "headContent" || key == "keywords" || key == "keyPhrases">
+                    <td><pre style="font-family: inherit;">${fields[key][0]}</pre></td>
+                    <td><pre style="font-family: inherit;">${fields[key][1]}</pre></td>
+                <#elseif key == "levelOfAcceptance">
+                    <td><p style="max-width: 400px; word-break: break-word; margin-bottom: 0px">${levels[fields[key][0]]}</p></td>
+                    <td><p style="max-width: 400px; word-break: break-word; margin-bottom: 0px">${levels[fields[key][1]]}</p></td>
+                <#elseif key == "normReferences">
+                    <td>
+                        <#list activeLinks?keys as a_link>
+                            <p style="margin-bottom: 0;">${a_link}</p>
+                        </#list>
+                        <#list inactiveLinks as ina_link>
+                            <p style="margin-bottom: 0;">${ina_link}</p>
+                        </#list>
+                    </td>
+                <#else>
+                    <td><p style="max-width: 400px; word-break: break-word; margin-bottom: 0px">${fields[key][0]}</p></td>
+                    <td><p style="max-width: 400px; word-break: break-word; margin-bottom: 0px">${fields[key][1]}</p></td>
+                </#if>
             </tr>
         </#list>
     </table>
+
+    <script>
+        function conf() {
+            let str = 'Документ будет безвозвратно удален.';
+            let message = 'Вы уверены?\n';
+            let check = confirm(message + str);
+            if (check !== true) {
+                event.preventDefault();
+            }
+        }
+    </script>
 </@c.page>
