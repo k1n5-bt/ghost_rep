@@ -40,6 +40,7 @@ public class MyDocumentsController {
 //      Iterable<Data> messages = fileRepo.findByFileDescLikeAndNameLike(li(descFilter), li(nameFilter));
         Iterable<Data> messages = dataService.getArchiveData();
         model.put("messages", messages);
+        model.put("levels", Data.acceptanceLevels());
         model.put("formAction", "/main");
         model.put("descFilter", descFilter);
         model.put("nameFilter", nameFilter);
@@ -85,8 +86,8 @@ public class MyDocumentsController {
         model.put("levels", Data.acceptanceLevels());
         model.put("fields", fields);
         model.put("fieldNames", file.fieldNames());
+        model.put("levels", Data.acceptanceLevels());
         model.put("ruFieldNames", file.ruFieldNames());
-
         model.put("activeLinks", dataService.getActiveLinkNames(file));
         model.put("inactiveLinks", file.getInactiveLinks());
         return "archived_document";

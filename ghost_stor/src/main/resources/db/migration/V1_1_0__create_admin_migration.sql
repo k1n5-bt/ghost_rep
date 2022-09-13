@@ -1,3 +1,7 @@
-INSERT INTO usr (id, username, password, email, active) VALUES (1, 'admin', 'qwerty', 'admin@gstorage.com', true);
+INSERT INTO usr (id, username, password, email, active, name, surname, patronymic, company, field, division)
+VALUES (0, 'admin', 'qwerty', 'admin@gstorage.com', true, 'Иван', 'Петров', 'Васильевич', 'UrFU', 'Образование',
+        'Кафедра математики');
 
-INSERT INTO user_role (user_id, roles) values (1, 'USER'), (1, 'ADMIN')
+INSERT INTO user_role (user_id, roles)
+values (0, 'USER'),
+       (0, 'ADMIN')

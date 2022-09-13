@@ -1,24 +1,23 @@
 <#import "parts/common.ftl" as c>
 
 <@c.page>
-    Список пользователей сайта
-
-    <table>
-        <thead>
-        <tr>
-            <th>Имя </th>
-            <th>Роль</th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
+Список пользователей сайта
+    <div class = "card-group">
         <#list users as user>
-            <tr>
-                <td>${user.username}</td>
-                <td><#list user.roles as role>${role}<#sep>, </#list></td>
-                <td><a href="/user/${user.id}">изменить</a></td>
-            </tr>
+            <div class="col-md-6 col-xl-2">
+                <div width="50" height="100" class="card me-3">
+                    <img class="card-img-top" src="/static/user.png">
+                    <div class="m-2">
+                        <span>
+                            <a>${user.username}</a><br>
+                            Роли: <#list user.roles as role>${role}<#sep>, </#list><br>
+                            <a href="/user/${user.id}" class="dock_link">изменить</a>
+                        </span><br>
+                    </div>
+                </div>
+            </div>
+        <#else>
+            Не найдено пользователей
         </#list>
-        </tbody>
-    </table>
+    </div>
 </@c.page>
