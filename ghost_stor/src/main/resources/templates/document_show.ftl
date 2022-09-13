@@ -2,22 +2,41 @@
 <#include "parts/security.ftl">
 
 <@c.page>
-    <#if isAdmin>
-        <div style="display: flex">
+    <div style="display: flex">
+        <#if document.isUserInFavorite(user) == true>
+            <a href="/favorite/remove/${document.id}">
+                <button class="btn btn-primary" style="margin: 0 10px 10px 0;"
+                >Удалить из избранного
+                </button>
+            </a><br>
+        <#else>
+            <a href="/favorite/${document.id}">
+                <button class="btn btn-primary" style="margin: 0 10px 10px 0;"
+                >Добавить в избранное
+                </button>
+            </a><br>
+        </#if>
+        <#if isAdmin>
             <a href="/document/${document.id}/edit">
                 <button class="btn btn-primary" style="margin: 0 10px 10px 0;">Изменить</button>
             </a><br>
             <a href="/document/${document.id}/replace">
-                <button class="btn btn-primary" style="margin: 0 10px 10px;" onclick="showQuestion('replace')">Заменить</button>
+                <button class="btn btn-primary" style="margin: 0 10px 10px;" onclick="showQuestion('replace')">
+                    Заменить
+                </button>
             </a><br>
             <a href="/document/${document.id}/archive">
-                <button class="btn btn-primary" style="margin: 0 10px 10px;" onclick="showQuestion('archive')">Отменить</button>
+                <button class="btn btn-primary" style="margin: 0 10px 10px;" onclick="showQuestion('archive')">
+                    Отменить
+                </button>
             </a><br>
             <a href="/delete/${document.id}">
-                <button class="btn btn-primary" style="margin: 0 10px 10px;" onclick="showQuestion('delete')">Удалить полностью</button>
+                <button class="btn btn-primary" style="margin: 0 10px 10px;" onclick="showQuestion('delete')">Удалить
+                    полностью
+                </button>
             </a><br>
-        </div>
-    </#if>
+        </#if>
+    </div>
     <#if document.filename != "">
         <a href="/files/${document.filename}" target="_blank">Прикрепленный файл</a><br>
     </#if>
@@ -57,6 +76,26 @@
 
     <script>
         function showQuestion(action) {
+            let str;
+            switch (action) {
+                case "replace":
+                    str = 'Необходимо будет заполнить новый документ.';
+                    break;
+                case "archive":
+                    str = 'Документ будет отправлен в архив, а ссылки в других документах станут неактивны.';
+                    break;
+                case "delete":
+                    str = 'Документ будет безвозвратно удален.';
+                    break;
+            }
+
+            let message = 'Вы уверены?\n';
+            let check = confirm(message + str);
+            if (check !== true) {
+                event.preventDefault();
+            }
+        }
+        function isInFavorite(action) {
             let str;
             switch (action) {
                 case "replace":
