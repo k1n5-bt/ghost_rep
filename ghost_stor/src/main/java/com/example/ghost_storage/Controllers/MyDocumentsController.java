@@ -55,6 +55,7 @@ public class MyDocumentsController {
             Map<String, Object> model) throws FileNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         Data file = fileRepo.findById(Integer.parseInt(documentId)).get(0);
 
+        List<Data> arr = fileRepo.search("%a%");
 
         Map<String, String[]> fields = file.getAllValues();
         model.put("document", file);
