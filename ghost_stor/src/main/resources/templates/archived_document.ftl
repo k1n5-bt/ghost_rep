@@ -3,7 +3,9 @@
 
 <@c.page>
     <#if isAdmin>
-        <a href="/delete/${document.id}">Удалить полностью</a><br>
+        <a href="/delete/${document.id}">
+            <button class="btn btn-primary" style="margin: 0 0 10px 0;" onclick="conf()">Удалить полностью</button>
+        </a><br>
     </#if>
     <#if document.filename != "">
         <a href="/files/${document.filename}" target="_blank">Прикрепленный файл</a><br>
@@ -27,8 +29,7 @@
                 <#elseif key == "normReferences">
                     <td>
                         <#list activeLinks?keys as a_link>
-                            <a href="/document/${activeLinks[a_link]}" class="dock_link">${a_link}</a>
-                            <br>
+                            <p style="margin-bottom: 0;">${a_link}</p>
                         </#list>
                         <#list inactiveLinks as ina_link>
                             <p style="margin-bottom: 0;">${ina_link}</p>
@@ -41,4 +42,15 @@
             </tr>
         </#list>
     </table>
+
+    <script>
+        function conf() {
+            let str = 'Документ будет безвозвратно удален.';
+            let message = 'Вы уверены?\n';
+            let check = confirm(message + str);
+            if (check !== true) {
+                event.preventDefault();
+            }
+        }
+    </script>
 </@c.page>

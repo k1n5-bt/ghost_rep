@@ -2,7 +2,10 @@
 <#include "parts/security.ftl">
 
 <@c.page>
-        <form method="post" enctype="multipart/form-data" id="form">
+        <form method="post" enctype="multipart/form-data" <#if parentDocId??> action="/document" </#if> id="form">
+            <#if parentDocId??>
+                <input type="hidden" name="parentDocId" value="${parentDocId}" >
+            </#if>
             <table class="table">
                 <tr>
                     <th>Поле</th>
@@ -34,6 +37,14 @@
                                 <div class="autocomplete" style="width:200px;" id="normRefBlock">
                                     <button type="button" onclick="createInput('')" style='margin-bottom: 10px;'>+</button>
                                 </div>
+                            <#elseif key == "status">
+                                <input class="form-control" type="text" name=${key} id=${key}
+                                        <#if lastFields??>
+                                            value="${lastFields[key]}"
+                                        <#elseif parentDocDesc??>
+                                            value="${parentDocDesc}"
+                                        </#if>
+                                >
                             <#else>
                                 <input class="form-control" type="text" name=${key} id=${key}
                                         <#if lastFields??> value="${lastFields[key]}" </#if>
@@ -56,7 +67,13 @@
         </form>
     <script>
         window.counter = 1;
-        let names = [<#list ghostDescs as desc>"${desc}",</#list>];
+        let names = [<#list ghostDescs as desc>
+            <#if lastFields??>
+                <#if desc != lastFields["fileDesc"]>"${desc}",</#if>
+            <#else>
+                "${desc}",
+            </#if>
+        </#list>];
 
         <#if activeLinks??>
             <#list activeLinks?keys as a_link>
@@ -69,10 +86,6 @@
             createInput("${ina_link}");
             </#list>
         </#if>
-
-        function poop() {
-            alert("sssssss");
-        }
 
         function createInput(str_value) {
             let my_block = null;

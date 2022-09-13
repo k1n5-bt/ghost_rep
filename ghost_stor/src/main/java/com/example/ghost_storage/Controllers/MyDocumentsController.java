@@ -83,6 +83,7 @@ public class MyDocumentsController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).toString();
         model.put("document", file);
         model.put("fileName", Data.fieldNames());
+        model.put("levels", Data.acceptanceLevels());
         model.put("fields", fields);
         model.put("fieldNames", file.fieldNames());
         model.put("levels", Data.acceptanceLevels());
@@ -187,12 +188,14 @@ public class MyDocumentsController {
             if (file.getState() == Data.State.CANCELED)
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).toString();
 
-
             Map<String, String> lastFields = file.getLastValues();
-            model.put("document", file);
-            model.put("lastFields", lastFields);
+            model.put("parentDocDesc", "Взамен " + file.getFileDesc());
+            model.put("parentDocId", file.getId());
+
             model.put("fieldNames", Data.fieldNames());
             model.put("ruFieldNames", Data.ruFieldNames());
+            model.put("levels", Data.acceptanceLevels());
+            model.put("ghostDescs", dataService.getGhostDesc().keySet().toArray(new String[0]));
             return "document_form";
 
         } else {

@@ -55,7 +55,60 @@ public class DataService {
         }
         fileRepo.save(doc);
         createRelations(doc, activeLinksIds);
+        if (params.containsKey("parentDocId")) {
+            int parentDocId = Integer.parseInt(params.get("parentDocId"));
+            replaceDoc(parentDocId, doc.getId());
+
+        }
         return doc;
+    }
+
+    public void replaceDoc(int oldDocId, int newDocId) {
+        List<Data> docs = fileRepo.findById(oldDocId);
+        if (docs.size() > 0) {
+            Data file = docs.get(0);
+            file.setState(Data.State.CANCELED);
+            fileRepo.save(file);
+
+            List<GhostRelation> relations = relationRepo.findByDataId(oldDocId);
+            for (GhostRelation relation : relations) {
+                relation.setDataId(newDocId);
+                relationRepo.save(relation);
+                replaceActiveLink(relation.getReferralDataId(), oldDocId, newDocId);
+            }
+
+            List<GhostRelation> selfRelations = relationRepo.findByReferralDataId(oldDocId);
+            for (GhostRelation relation : selfRelations) {
+                List<Data> files = fileRepo.findById(relation.getDataId());
+                if (files.size() > 0) {
+                    Data ghost = files.get(0);
+                    deactivateActiveLink(file, ghost.getId(), ghost.getFileDesc());
+                    fileRepo.save(file);
+                }
+                relationRepo.delete(relation);
+            }
+        }
+
+
+    }
+
+    public void replaceActiveLink(int docId, int oldId, int newId) {
+        List<Data> docs = fileRepo.findById(docId);
+        if (docs.size() > 0) {
+            Data doc = docs.get(0);
+
+            int[] oldIds = doc.getActiveLinks();
+            List<Integer> newIds = new ArrayList<>();
+            for (int id : oldIds) {
+                if (id != oldId) {
+                    newIds.add(id);
+                } else {
+                    newIds.add(newId);
+                }
+            }
+            doc.setActiveLinks(newIds);
+            fileRepo.save(doc);
+        }
     }
 
     public List<Integer> saveLinks(Data file, Map<String, String> params) {
@@ -183,6 +236,17 @@ public class DataService {
             }
             relationRepo.delete(relation);
         }
+
+        List<GhostRelation> selfRelations = relationRepo.findByReferralDataId(doc.getId());
+        for (GhostRelation relation : selfRelations) {
+            List<Data> files = fileRepo.findById(relation.getDataId());
+            if (files.size() > 0) {
+                Data file = files.get(0);
+                deactivateActiveLink(doc, file.getId(), file.getFileDesc());
+                fileRepo.save(doc);
+            }
+            relationRepo.delete(relation);
+        }
     }
 
     public void deactivateActiveLink(Data doc, int linkId, String linkDesc) {
@@ -234,14 +298,14 @@ public class DataService {
             return;
         }
         Data data = dataList.get(0);
-        var userIsAuthor = Objects.equals(data.getAuthor(), user);
-        if (!user.isAdmin() && !userIsAuthor) {
+        if (!user.isAdmin()) {
             return;
         }
         if (data.getFilename().length() > 0) {
             File file = new File(uploadPath + "/" + data.getFilename());
             if (!file.delete()) throw new FileNotFoundException();
         }
+        archiveDocument(data);
         fileRepo.delete(data);
     }
 

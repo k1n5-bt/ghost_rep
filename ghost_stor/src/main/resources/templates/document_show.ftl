@@ -3,10 +3,20 @@
 
 <@c.page>
     <#if isAdmin>
-        <a href="/document/${document.id}/edit">Изменить</a><br>
-        <a href="/document/${document.id}/edit">Заменить</a><br>
-        <a href="/document/${document.id}/archive">Отменить</a><br>
-        <a href="/delete/${document.id}">Удалить полностью</a><br>
+        <div style="display: flex">
+            <a href="/document/${document.id}/edit">
+                <button class="btn btn-primary" style="margin: 0 10px 10px 0;">Изменить</button>
+            </a><br>
+            <a href="/document/${document.id}/replace">
+                <button class="btn btn-primary" style="margin: 0 10px 10px;" onclick="showQuestion('replace')">Заменить</button>
+            </a><br>
+            <a href="/document/${document.id}/archive">
+                <button class="btn btn-primary" style="margin: 0 10px 10px;" onclick="showQuestion('archive')">Отменить</button>
+            </a><br>
+            <a href="/delete/${document.id}">
+                <button class="btn btn-primary" style="margin: 0 10px 10px;" onclick="showQuestion('delete')">Удалить полностью</button>
+            </a><br>
+        </div>
     </#if>
     <#if document.filename != "">
         <a href="/files/${document.filename}" target="_blank">Прикрепленный файл</a><br>
@@ -44,4 +54,27 @@
             </tr>
         </#list>
     </table>
+
+    <script>
+        function showQuestion(action) {
+            let str;
+            switch (action) {
+                case "replace":
+                    str = 'Необходимо будет заполнить новый документ.';
+                    break;
+                case "archive":
+                    str = 'Документ будет отправлен в архив, а ссылки в других документах станут неактивны.';
+                    break;
+                case "delete":
+                    str = 'Документ будет безвозвратно удален.';
+                    break;
+            }
+
+            let message = 'Вы уверены?\n';
+            let check = confirm(message + str);
+            if (check !== true) {
+                event.preventDefault();
+            }
+        }
+    </script>
 </@c.page>
