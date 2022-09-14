@@ -5,12 +5,12 @@ import com.example.ghost_storage.Model.GhostRelation;
 import com.example.ghost_storage.Model.User;
 import com.example.ghost_storage.Storage.FileRepo;
 import com.example.ghost_storage.Storage.RelationRepo;
+import com.example.ghost_storage.Storage.UserRepo;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.Console;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -29,7 +29,7 @@ public class DataService {
     @Value("${upload.path}")
     private String uploadPath;
 
-    public DataService(FileRepo fileRepo, RelationRepo relationRepo) {
+    public DataService(FileRepo fileRepo, RelationRepo relationRepo, UserRepo userRepo) {
         this.fileRepo = fileRepo;
         this.relationRepo = relationRepo;
     }
