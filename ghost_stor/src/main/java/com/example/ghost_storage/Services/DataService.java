@@ -337,6 +337,48 @@ public class DataService {
         return  dict;
     }
 
+    public static String[] searchFields() {
+        return new String[] {
+                "fileDesc",
+                "name",
+                "OKCcode",
+                "OKPDcode",
+                "adoptionDate",
+                "introductionDate",
+                "developer",
+                "predecessor",
+                "headContent",
+                "keywords",
+                "keyPhrases",
+                "levelOfAcceptance",
+                "contents",
+                "changes",
+                "modifications",
+                "status"
+        };
+    }
+
+    public Map<String, String> searchRuFields() {
+        return new HashMap<>() {{
+            put("name", "Наименование");
+            put("fileDesc", "Обозначение");
+            put("OKCcode", "Код ОКС");
+            put("OKPDcode", "Код ОКПД 2");
+            put("adoptionDate", "Дата принятия");
+            put("introductionDate", "Дата введения");
+            put("developer", "Разработчик");
+            put("predecessor", "Принят взамен");
+            put("contents", "Ссылка на документ");
+            put("levelOfAcceptance", "Уровень принятия");
+            put("changes", "Изменения");
+            put("status", "Статус");
+            put("headContent", "Содержание");
+            put("keywords", "Ключевые слова");
+            put("keyPhrases", "Ключевые фразы");
+            put("modifications", "Поправки");
+        }};
+    }
+
 
 
 }

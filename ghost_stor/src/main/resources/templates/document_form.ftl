@@ -37,7 +37,7 @@
                                 <div class="autocomplete" style="width:200px;" id="normRefBlock">
                                     <button type="button" onclick="createInput('')" style='margin-bottom: 10px;'>+</button>
                                 </div>
-                            <#elseif key == "status">
+                            <#elseif key == "predecessor">
                                 <input class="form-control" type="text" name=${key} id=${key}
                                         <#if lastFields??>
                                             value="${lastFields[key]}"

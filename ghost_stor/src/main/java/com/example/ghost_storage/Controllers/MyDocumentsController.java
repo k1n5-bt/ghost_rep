@@ -203,4 +203,27 @@ public class MyDocumentsController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).toString();
         }
     }
+
+    @GetMapping("/search")
+    public String search(
+            @RequestParam Map<String, String> params,
+            @AuthenticationPrincipal User user, Map<String, Object> model) throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        Iterable<Data> messages;
+        String[] fields = DataService.searchFields();
+        if (params.size() == 0) {
+            messages = fileRepo.findByStateId(Data.State.ACTIVE.getValue());
+            for (String field : fields) {
+                params.put(field, "");
+            }
+        } else {
+            messages = fileRepo.findByStateId(Data.State.ACTIVE.getValue());
+        }
+        model.put("params", params);
+        model.put("ruFields", dataService.searchRuFields());
+        model.put("fields", fields);
+        model.put("messages", messages);
+        model.put("levels", Data.acceptanceLevels());
+        return "search_page";
+    }
+
 }
