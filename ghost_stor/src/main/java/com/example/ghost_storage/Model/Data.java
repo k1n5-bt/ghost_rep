@@ -164,6 +164,7 @@ public class Data {
 
     public static Map<String, String> acceptanceLevels() {
         Map<String, String> map  = new HashMap<>() {{
+            put("-", "");
             put("", "");
             put("a", "Международный");
             put("b", "Иностранный");

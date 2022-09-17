@@ -36,13 +36,13 @@ public class DataService {
 
     public Data createDoc(MultipartFile file, Map<String, String> params) throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         Data doc = new Data();
-        Map<String, String> emptyValues = doc.emptyFieldValues();
         for (String fieldName : Data.fieldNames()) {
             if (!fieldName.equals("normReferences")) {
-                String newValue = params.get(fieldName);
-                String oldValue = emptyValues.get(fieldName);
-                if (!newValue.equals(oldValue)) {
-                    setLastName(doc, fieldName, newValue);
+                String param = params.get(fieldName);
+                if (param.equals("")) {
+                    doc.getClass().getMethod("set" + maxFieldNames().get(fieldName), "-".getClass()).invoke(doc, "-");
+                } else {
+                    doc.getClass().getMethod("set" + maxFieldNames().get(fieldName), param.getClass()).invoke(doc, param);
                 }
             }
         }
@@ -167,8 +167,10 @@ public class DataService {
 
         for (String fieldName : Data.fieldNames()) {
             if (!fieldName.equals("normReferences")) {
-                String newValue = params.get(fieldName);
-                String oldValue = lastValues.get(fieldName);
+                String parVal = params.get(fieldName);
+                String newValue = parVal.equals("-") ? "" : parVal;
+                String lastValue = lastValues.get(fieldName);
+                String oldValue = lastValue.equals("-") ? "" : lastValue;
 
                 if (!newValue.equals(oldValue)) {
                     setLastName(doc, fieldName, newValue);
@@ -280,7 +282,7 @@ public class DataService {
         Object obj = file.getClass().getMethod("get" + maxFieldNames().get(fieldName) + "FirstRedaction").invoke(file);
         if (obj == null) {
             obj = file.getClass().getMethod("get" + maxFieldNames().get(fieldName)).invoke(file);
-            if (obj == null) {
+            if (obj.equals("-")) {
                 file.getClass().getMethod("set" + maxFieldNames().get(fieldName), value.getClass()).invoke(file, value);
             } else {
                 file.getClass().getMethod("set" + maxFieldNames().get(fieldName) + "FirstRedaction", value.getClass()).invoke(file, value);
@@ -309,9 +311,13 @@ public class DataService {
         fileRepo.delete(data);
     }
 
-    public List<Data> getArchiveData(){
-        List<Data> canceledData = fileRepo.findByStateId(Data.State.CANCELED.getValue());
-//        replacedData.addAll(canceledData);
+    public List<Data> getArchiveData(String descFilter){
+        List<Data> canceledData;
+        if (descFilter.equals("")) {
+            canceledData = fileRepo.findByStateId(Data.State.CANCELED.getValue());
+        } else {
+            canceledData = fileRepo.findByStateIdAndFileDescLike(Data.State.CANCELED.getValue(), li(descFilter));
+        }
         return canceledData;
     }
 
@@ -337,6 +343,79 @@ public class DataService {
         return  dict;
     }
 
+    public static String[] searchFields() {
+        return new String[] {
+                "fileDesc",
+                "name",
+                "OKCcode",
+                "OKPDcode",
+                "adoptionDate",
+                "introductionDate",
+                "developer",
+                "predecessor",
+                "headContent",
+                "keywords",
+                "keyPhrases",
+                "levelOfAcceptance",
+                "contents",
+                "changes",
+                "modifications",
+                "status"
+        };
+    }
 
+    public Map<String, String> searchRuFields() {
+        return new HashMap<>() {{
+            put("name", "Наименование");
+            put("fileDesc", "Обозначение");
+            put("OKCcode", "Код ОКС");
+            put("OKPDcode", "Код ОКПД 2");
+            put("adoptionDate", "Дата принятия");
+            put("introductionDate", "Дата введения");
+            put("developer", "Разработчик");
+            put("predecessor", "Принят взамен");
+            put("contents", "Ссылка на документ");
+            put("levelOfAcceptance", "Уровень принятия");
+            put("changes", "Изменения");
+            put("status", "Статус");
+            put("headContent", "Содержание");
+            put("keywords", "Ключевые слова");
+            put("keyPhrases", "Ключевые фразы");
+            put("modifications", "Поправки");
+        }};
+    }
 
+    public List<Data> findByParams(Map<String, String> params) {
+        return fileRepo.search(
+            li(params.get("fileDesc")),
+            li(params.get("name")),
+            li(params.get("OKCcode")),
+            li(params.get("OKPDcode")),
+            li(params.get("adoptionDate")),
+            li(params.get("introductionDate")),
+            li(params.get("developer")),
+            li(params.get("predecessor")),
+            li(params.get("headContent")),
+            li(params.get("keywords")),
+            li(params.get("keyPhrases")),
+            li(params.get("levelOfAcceptance")),
+            li(params.get("contents")),
+            li(params.get("changes")),
+            li(params.get("modifications")),
+            li(params.get("status"))
+        );
+    }
+
+    public String li(String str) {
+        if (str.equals("")) {
+            return "%";
+        }
+        else {
+            return "%" + str + "%";
+        }
+    }
+
+    public static String queryStr(Map<String, String> params) {
+        return "aaaaa";
+    }
 }

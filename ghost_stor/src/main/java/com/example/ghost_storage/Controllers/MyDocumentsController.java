@@ -37,15 +37,11 @@ public class MyDocumentsController {
     @GetMapping("/archive")
     public String main(
             @RequestParam(defaultValue = "") String descFilter,
-            @RequestParam(defaultValue = "") String nameFilter,
             Map<String, Object> model) {
-//      Iterable<Data> messages = fileRepo.findByFileDescLikeAndNameLike(li(descFilter), li(nameFilter));
-        Iterable<Data> messages = dataService.getArchiveData();
+        Iterable<Data> messages = dataService.getArchiveData(descFilter);
         model.put("messages", messages);
         model.put("levels", Data.acceptanceLevels());
-        model.put("formAction", "/main");
         model.put("descFilter", descFilter);
-        model.put("nameFilter", nameFilter);
 
         return "archived_docs";
     }
@@ -56,8 +52,6 @@ public class MyDocumentsController {
             @AuthenticationPrincipal User user,
             Map<String, Object> model) throws FileNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         Data file = fileRepo.findById(Integer.parseInt(documentId)).get(0);
-
-
         Map<String, String[]> fields = file.getAllValues();
         model.put("document", file);
         model.put("fileName", Data.fieldNames());
@@ -251,4 +245,27 @@ public class MyDocumentsController {
             }
         }
     }
+
+    @GetMapping("/search")
+    public String search(
+            @RequestParam Map<String, String> params,
+            @AuthenticationPrincipal User user, Map<String, Object> model) throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        Iterable<Data> messages;
+        String[] fields = DataService.searchFields();
+        if (params.size() == 0) {
+            messages = fileRepo.findByStateId(Data.State.ACTIVE.getValue());
+            for (String field : fields) {
+                params.put(field, "");
+            }
+        } else {
+            messages = dataService.findByParams(params);
+        }
+        model.put("params", params);
+        model.put("ruFields", dataService.searchRuFields());
+        model.put("fields", fields);
+        model.put("messages", messages);
+        model.put("levels", Data.acceptanceLevels());
+        return "search_page";
+    }
+
 }
