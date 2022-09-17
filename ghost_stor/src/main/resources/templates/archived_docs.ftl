@@ -2,6 +2,8 @@
 <#include "parts/security.ftl">
 
 <@c.page>
+    <#include "parts/search.ftl">
+
     <div class = "card-group">
         <#list messages as message>
             <div class="col-md-6 col-xl-2">

@@ -36,13 +36,13 @@ public class DataService {
 
     public Data createDoc(MultipartFile file, Map<String, String> params) throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         Data doc = new Data();
-        Map<String, String> emptyValues = doc.emptyFieldValues();
         for (String fieldName : Data.fieldNames()) {
             if (!fieldName.equals("normReferences")) {
-                String newValue = params.get(fieldName);
-                String oldValue = emptyValues.get(fieldName);
-                if (!newValue.equals(oldValue)) {
-                    setLastName(doc, fieldName, newValue);
+                String param = params.get(fieldName);
+                if (param.equals("")) {
+                    doc.getClass().getMethod("set" + maxFieldNames().get(fieldName), "-".getClass()).invoke(doc, "-");
+                } else {
+                    doc.getClass().getMethod("set" + maxFieldNames().get(fieldName), param.getClass()).invoke(doc, param);
                 }
             }
         }
@@ -167,8 +167,10 @@ public class DataService {
 
         for (String fieldName : Data.fieldNames()) {
             if (!fieldName.equals("normReferences")) {
-                String newValue = params.get(fieldName);
-                String oldValue = lastValues.get(fieldName);
+                String parVal = params.get(fieldName);
+                String newValue = parVal.equals("-") ? "" : parVal;
+                String lastValue = lastValues.get(fieldName);
+                String oldValue = lastValue.equals("-") ? "" : lastValue;
 
                 if (!newValue.equals(oldValue)) {
                     setLastName(doc, fieldName, newValue);
@@ -280,7 +282,7 @@ public class DataService {
         Object obj = file.getClass().getMethod("get" + maxFieldNames().get(fieldName) + "FirstRedaction").invoke(file);
         if (obj == null) {
             obj = file.getClass().getMethod("get" + maxFieldNames().get(fieldName)).invoke(file);
-            if (obj == null) {
+            if (obj.equals("-")) {
                 file.getClass().getMethod("set" + maxFieldNames().get(fieldName), value.getClass()).invoke(file, value);
             } else {
                 file.getClass().getMethod("set" + maxFieldNames().get(fieldName) + "FirstRedaction", value.getClass()).invoke(file, value);
@@ -309,9 +311,13 @@ public class DataService {
         fileRepo.delete(data);
     }
 
-    public List<Data> getArchiveData(){
-        List<Data> canceledData = fileRepo.findByStateId(Data.State.CANCELED.getValue());
-//        replacedData.addAll(canceledData);
+    public List<Data> getArchiveData(String descFilter){
+        List<Data> canceledData;
+        if (descFilter.equals("")) {
+            canceledData = fileRepo.findByStateId(Data.State.CANCELED.getValue());
+        } else {
+            canceledData = fileRepo.findByStateIdAndFileDescLike(Data.State.CANCELED.getValue(), li(descFilter));
+        }
         return canceledData;
     }
 
@@ -400,7 +406,7 @@ public class DataService {
         );
     }
 
-    private String li(String str) {
+    public String li(String str) {
         if (str.equals("")) {
             return "%";
         }

@@ -1,5 +1,6 @@
 package com.example.ghost_storage.Controllers;
 
+import com.example.ghost_storage.Services.DataService;
 import com.example.ghost_storage.Services.UserService;
 import com.example.ghost_storage.Storage.FileRepo;
 import com.example.ghost_storage.Storage.UserRepo;
@@ -25,13 +26,15 @@ import java.util.UUID;
 class MainController {
     private final FileRepo fileRepo;
     private final UserService userService;
+    private final DataService dataService;
 
     @Value("${upload.path}")
     private String uploadPath;
 
-    public MainController(FileRepo fileRepo, UserService userService) {
+    public MainController(FileRepo fileRepo, UserService userService, DataService dataService) {
         this.userService = userService;
         this.fileRepo = fileRepo;
+        this.dataService = dataService;
     }
 
     @GetMapping("/")
@@ -42,13 +45,16 @@ class MainController {
     @GetMapping("/main")
     public String main(
             @RequestParam(defaultValue = "") String descFilter,
-            @RequestParam(defaultValue = "") String nameFilter,
             Map<String, Object> model) {
-        Iterable<Data> messages = fileRepo.findByStateId(Data.State.ACTIVE.getValue());
+        Iterable<Data> messages;
+        if (descFilter.equals("")) {
+            messages = fileRepo.findByStateId(Data.State.ACTIVE.getValue());
+        } else {
+            messages = fileRepo.findByStateIdAndFileDescLike(Data.State.ACTIVE.getValue(), dataService.li(descFilter));
+        }
         model.put("messages", messages);
         model.put("formAction", "/main");
         model.put("descFilter", descFilter);
-        model.put("nameFilter", nameFilter);
         return "main";
     }
 

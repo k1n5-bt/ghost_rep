@@ -37,15 +37,11 @@ public class MyDocumentsController {
     @GetMapping("/archive")
     public String main(
             @RequestParam(defaultValue = "") String descFilter,
-            @RequestParam(defaultValue = "") String nameFilter,
             Map<String, Object> model) {
-//      Iterable<Data> messages = fileRepo.findByFileDescLikeAndNameLike(li(descFilter), li(nameFilter));
-        Iterable<Data> messages = dataService.getArchiveData();
+        Iterable<Data> messages = dataService.getArchiveData(descFilter);
         model.put("messages", messages);
         model.put("levels", Data.acceptanceLevels());
-        model.put("formAction", "/main");
         model.put("descFilter", descFilter);
-        model.put("nameFilter", nameFilter);
 
         return "archived_docs";
     }
