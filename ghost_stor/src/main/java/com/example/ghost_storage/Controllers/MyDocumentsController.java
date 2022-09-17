@@ -54,9 +54,6 @@ public class MyDocumentsController {
             @AuthenticationPrincipal User user,
             Map<String, Object> model) throws FileNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         Data file = fileRepo.findById(Integer.parseInt(documentId)).get(0);
-
-        List<Data> arr = fileRepo.search("%a%");
-
         Map<String, String[]> fields = file.getAllValues();
         model.put("document", file);
         model.put("fileName", Data.fieldNames());
@@ -216,7 +213,7 @@ public class MyDocumentsController {
                 params.put(field, "");
             }
         } else {
-            messages = fileRepo.findByStateId(Data.State.ACTIVE.getValue());
+            messages = dataService.findByParams(params);
         }
         model.put("params", params);
         model.put("ruFields", dataService.searchRuFields());

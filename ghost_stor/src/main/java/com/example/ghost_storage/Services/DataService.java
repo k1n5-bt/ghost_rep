@@ -379,6 +379,37 @@ public class DataService {
         }};
     }
 
+    public List<Data> findByParams(Map<String, String> params) {
+        return fileRepo.search(
+            li(params.get("fileDesc")),
+            li(params.get("name")),
+            li(params.get("OKCcode")),
+            li(params.get("OKPDcode")),
+            li(params.get("adoptionDate")),
+            li(params.get("introductionDate")),
+            li(params.get("developer")),
+            li(params.get("predecessor")),
+            li(params.get("headContent")),
+            li(params.get("keywords")),
+            li(params.get("keyPhrases")),
+            li(params.get("levelOfAcceptance")),
+            li(params.get("contents")),
+            li(params.get("changes")),
+            li(params.get("modifications")),
+            li(params.get("status"))
+        );
+    }
 
+    private String li(String str) {
+        if (str.equals("")) {
+            return "%";
+        }
+        else {
+            return "%" + str + "%";
+        }
+    }
 
+    public static String queryStr(Map<String, String> params) {
+        return "aaaaa";
+    }
 }
