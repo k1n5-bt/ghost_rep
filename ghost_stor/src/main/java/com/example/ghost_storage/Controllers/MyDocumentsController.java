@@ -1,6 +1,7 @@
 package com.example.ghost_storage.Controllers;
 
 import com.example.ghost_storage.Services.DataService;
+import com.example.ghost_storage.Services.MailSender;
 import com.example.ghost_storage.Storage.FileRepo;
 import com.example.ghost_storage.Storage.RelationRepo;
 import javassist.NotFoundException;
@@ -22,12 +23,13 @@ import java.util.Map;
 @Controller
 public class MyDocumentsController {
     private final FileRepo fileRepo;
-
     private final DataService dataService;
+    private final MailSender mailSender;
     private final RelationRepo relationRepo;
 
-    public MyDocumentsController(FileRepo fileRepo, DataService dataService, RelationRepo relationRepo) {
+    public MyDocumentsController(FileRepo fileRepo, DataService dataService, RelationRepo relationRepo, MailSender mailSender) {
         this.fileRepo = fileRepo;
+        this.mailSender = mailSender;
         this.dataService = dataService;
         this.relationRepo = relationRepo;
     }
@@ -135,6 +137,43 @@ public class MyDocumentsController {
         }
     }
 
+    @GetMapping("/favorite/{documentId}")
+    public String addToFavorite(
+            @PathVariable String documentId,
+            @AuthenticationPrincipal User user, Map<String, Object> model) throws Exception {
+        List<Data> docs = fileRepo.findById(Integer.parseInt(documentId));
+        if (docs.size() > 0) {
+            Data file = docs.get(0);
+            file.addFavorite(user);
+            fileRepo.save(file);
+            return "redirect:/document/" + file.getId();
+            }
+         else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).toString();
+        }
+    }
+
+    @GetMapping("/favorite/remove/{documentId}")
+    public String removeFromFavorite(
+            @PathVariable String documentId,
+            @AuthenticationPrincipal User user, Map<String, Object> model) throws Exception {
+        List<Data> docs = fileRepo.findById(Integer.parseInt(documentId));
+        if (docs.size() > 0) {
+            Data file = docs.get(0);
+            var fav = file.getFavorites();
+            for (var i = 0; i < fav.size(); i++ ){
+                User us = fav.get(i);
+                if (us.getId().equals(user.getId()))
+                    fav.remove(us);
+            }
+            file.setFavorites(fav);
+            fileRepo.save(file);
+            return "redirect:/document/" + file.getId();
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).toString();
+        }
+    }
+
     @PostMapping("/document/{documentId}/edit")
     public String updateDoc(
             @RequestParam("file") MultipartFile file,
@@ -143,6 +182,7 @@ public class MyDocumentsController {
             @AuthenticationPrincipal User user, Map<String, Object> model) throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         try {
             Data doc = dataService.updateDoc(documentId, file, params);
+            sendMessage(doc);
             return "redirect:/document/" + doc.getId();
         } catch (NotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).toString();
@@ -168,6 +208,7 @@ public class MyDocumentsController {
         if (docs.size() > 0) {
             Data file = docs.get(0);
             dataService.archiveDocument(file);
+            sendMessage(file);
             return "redirect:/archive";
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).toString();
@@ -185,7 +226,7 @@ public class MyDocumentsController {
             Data file = docs.get(0);
             if (file.getState() == Data.State.CANCELED)
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).toString();
-
+            sendMessage(file);
             Map<String, String> lastFields = file.getLastValues();
             model.put("parentDocDesc", "Взамен " + file.getFileDesc());
             model.put("parentDocId", file.getId());
@@ -198,6 +239,14 @@ public class MyDocumentsController {
 
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).toString();
+        }
+    }
+
+    private void sendMessage(Data file){
+        if (file.getFavorites().size() > 0){
+            for (User us: file.getFavorites()){
+                mailSender.send(us.getEmail(), "Обновление документа", "Добрый день! Документ был обновлен.");
+            }
         }
     }
 

@@ -183,6 +183,26 @@ public class Data {
     private User author;
     private String filename = "";
 
+    public List<User> getFavorites() {
+        return favorites;
+    }
+
+    public void setFavorites(List<User> favorites) {
+        this.favorites = favorites;
+    }
+
+    public void addFavorite(User user){
+        favorites.add(user);
+    }
+
+    public Boolean isUserInFavorite(User user){
+        for (User us : favorites) {
+            if (us.getId().equals(user.getId()))
+                return true;
+        }
+        return false;
+    }
+
     public enum State {
         ACTIVE(100), CANCELED(200), REPLACED(300);
 
@@ -214,6 +234,10 @@ public class Data {
     public void setState(State right) {
         this.stateId = right.getValue();
     }
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @CollectionTable(name = "favorites", joinColumns = @JoinColumn(name = "data_id"))
+    private List<User> favorites = new ArrayList<User>();
 
     private String codeName;
     private String OKCcode;
@@ -273,8 +297,6 @@ public class Data {
     public void setInactiveLinks(List<String> inactiveLinks) {
         this.inactiveLinks = String.join("#", inactiveLinks);
     }
-
-
 
     public String getActiveLinksFirstRedaction() {
         return activeLinksFirstRedaction;
