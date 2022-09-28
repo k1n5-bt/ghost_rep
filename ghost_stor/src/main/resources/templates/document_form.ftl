@@ -2,7 +2,8 @@
 <#include "parts/security.ftl">
 
 <@c.page>
-        <form method="post" enctype="multipart/form-data" <#if parentDocId??> action="/document" </#if> id="form">
+        <form method="post" enctype="multipart/form-data" <#if parentDocId??> action="/document" </#if> id="form"
+              onsubmit="return confirm('Закончить редактирование и сохранить изменения?');">
             <#if parentDocId??>
                 <input type="hidden" name="parentDocId" value="${parentDocId}" >
             </#if>
@@ -63,7 +64,13 @@
             <input type="hidden" name="_csrf" value="${_csrf.token}"/>
             <div class="form-group mb-3">
                 <button class="btn btn-primary" type="submit">Добавить</button>
+                <a href="/main">
+                    <button class="btn btn-primary" type="button" style="margin-left: 10px; background-color: #99DDFF; border-color: #99DDFF">
+                        Отменить
+                    </button>
+                </a><br>
             </div>
+
         </form>
     <script>
         window.counter = 1;
@@ -97,17 +104,13 @@
 
             newDiv.innerHTML = `<input id="` + name +
                 `" type="text" name="` + name +
-                `" placeholder="..." class="form-control" value="` + str_value +
+                `" placeholder="..." class="form-control" autocomplete="off" value="` + str_value +
                 `"><button type="button" onclick='removeInput(this)' style='margin-left: 20px;'>X</button>`;
 
             my_block = document.getElementById("normRefBlock");
             my_block.insertAdjacentElement('beforeend', newDiv);
 
             autocomplete(document.getElementById(name), names);
-
-            // window.setTimeout(function () {
-            //     document.getElementById(name).focus();
-            // }, 0);
         }
 
         function removeInput(el) {

@@ -17,6 +17,13 @@
                             <a href="/files/${message.filename}" download>Скачать</a><br>
                         </#if>
                     </div>
+                    <#if message.isUserInFavorite(user) == true>
+                        <div class="card-footer text-muted">
+                            <strong>
+                                <font size="1px">В избранном<br></font>
+                            </strong>
+                        </div>
+                    </#if>
                 </div>
             </div>
         <#else>

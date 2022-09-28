@@ -5,15 +5,15 @@
 
     <form id="form" class="select-wrapper" action="/user" method="post">
         <div class="form-floating mb-3">
-            <input type="text" name="username" class="form-control" id="formUsername" value="${user.username}">
+            <input type="text" name="username" class="form-control" id="formUsername" value="${user.username}" required>
             <label for="formUsername">Логин</label>
         </div>
         <div class="form-floating mb-3">
-            <input type="text" name="name" class="form-control" id="formName" value="${user.name}">
+            <input type="text" name="name" class="form-control" id="formName" value="${user.name}" required>
             <label for="formName">Имя</label>
         </div>
         <div class="form-floating mb-3">
-            <input type="text" name="surname" class="form-control" id="formSurname" value="${user.surname}">
+            <input type="text" name="surname" class="form-control" id="formSurname" value="${user.surname}" required>
             <label for="formSurname">Фамилия</label>
         </div>
         <div class="form-floating mb-3">
@@ -35,7 +35,13 @@
 
         <#list roles as role>
             <div>
-                <label><input type="checkbox" name="${role}" ${user.roles?seq_contains(role)?string("checked", "")}>${role}</label>
+                <label><input type="checkbox" name="${role}" ${user.roles?seq_contains(role)?string("checked", "")}>
+                    <#if role == "USER">
+                        Пользователь
+                    <#elseif role == "ADMIN">
+                        Администратор
+                    </#if>
+                </label>
             </div>
         </#list>
         <input type="hidden" value="${user.id}" name="userId">

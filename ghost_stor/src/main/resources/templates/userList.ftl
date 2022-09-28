@@ -9,8 +9,10 @@
                     <img class="card-img-top" src="/static/user.png">
                     <div class="m-2">
                         <span>
-                            <a>${user.username}</a><br>
-                            Роли: <#list user.roles as role>${role}<#sep>, </#list><br>
+                            <span>${user.username}</span><br>
+                            <span style="font-size: 13px;">
+                                Роль: ${user.rolesName()?seq_contains("ADMIN")?string("Администратор", "Пользователь")}
+                            </span><br>
                             <a href="/user/${user.id}" class="dock_link">изменить</a>
                         </span><br>
                     </div>

@@ -10,7 +10,7 @@
                         ${ruFields[field]}
                     </div>
                     <#if field == "introductionDate" || field == "adoptionDate">
-                        <input class="form-control mb-2 search_field" type="text" name="${field}" value="${params[field]}" placeholder="01-01-2021">
+                        <input class="form-control mb-2 search_field" type="text" name="${field}" value="${params[field]}" placeholder="2021-01-01">
                     <#else>
                         <input class="form-control mb-2 search_field" type="text" name="${field}" value="${params[field]}" minlength="2">
                     </#if>

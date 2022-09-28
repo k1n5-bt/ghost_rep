@@ -5,6 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -34,6 +35,14 @@ public class User implements UserDetails {
     private Set<Role> roles;
 
     public User(){ }
+
+    public Set<String> rolesName() {
+        Set<String> set = new HashSet<>();
+        for (Role role : roles) {
+            set.add(role.name());
+        }
+        return set;
+    }
 
     public boolean isAdmin(){ return roles.contains(Role.ADMIN); }
 

@@ -2,23 +2,21 @@
 <#include "parts/security.ftl">
 
 <@c.page>
-    <div style="display: flex">
+    <div>
         <#if document.isUserInFavorite(user) == true>
             <a href="/favorite/remove/${document.id}">
-                <button class="btn btn-primary" style="margin: 0 10px 10px 0;"
-                >Удалить из избранного
-                </button>
+                <button class="btn btn-primary" style="margin-bottom: 10px;">Удалить из избранного</button>
             </a><br>
         <#else>
             <a href="/favorite/${document.id}">
-                <button class="btn btn-primary" style="margin: 0 10px 10px 0;"
-                >Добавить в избранное
-                </button>
+                <button class="btn btn-primary" style="margin: 0 10px 10px 0;">Добавить в избранное</button>
             </a><br>
         </#if>
+    </div>
+    <div style="display: flex">
         <#if isAdmin>
             <a href="/document/${document.id}/edit">
-                <button class="btn btn-primary" style="margin: 0 10px 10px;">Изменить</button>
+                <button class="btn btn-primary" style="margin: 0 10px 10px 0;">Изменить</button>
             </a><br>
             <a href="/document/${document.id}/replace">
                 <button class="btn btn-primary" style="margin: 0 10px 10px;" onclick="showQuestion('replace')">

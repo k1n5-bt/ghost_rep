@@ -8,6 +8,6 @@
         isFromCompany = user.isFromCompany()>
  <#else>
      <#assign
-        name = "unknown"
+        name = ""
         isAdmin = false>
  </#if>
