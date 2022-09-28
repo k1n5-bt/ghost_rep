@@ -37,7 +37,10 @@ public class MyDocumentsController {
     @GetMapping("/archive")
     public String main(
             @RequestParam(defaultValue = "") String descFilter,
+            @AuthenticationPrincipal User user,
             Map<String, Object> model) {
+        if (!user.isAdmin())
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).toString();
         Iterable<Data> messages = dataService.getArchiveData(descFilter);
         model.put("messages", messages);
         model.put("levels", Data.acceptanceLevels());
@@ -72,6 +75,8 @@ public class MyDocumentsController {
             @PathVariable String documentId,
             @AuthenticationPrincipal User user,
             Map<String, Object> model) throws FileNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        if (!user.isAdmin())
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).toString();
         Data file = fileRepo.findById(Integer.parseInt(documentId)).get(0);
         Map<String, String[]> fields = file.getAllValues();
 
@@ -93,6 +98,8 @@ public class MyDocumentsController {
     public String newDoc(
             @AuthenticationPrincipal User user,
             Map<String, Object> model) throws IOException {
+        if (!user.isAdmin())
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).toString();
         model.put("fieldNames", Data.fieldNames());
         model.put("ruFieldNames", Data.ruFieldNames());
         model.put("levels", Data.acceptanceLevels());
@@ -106,6 +113,8 @@ public class MyDocumentsController {
             @RequestParam Map<String, String> params,
             @RequestParam("file") MultipartFile file,
             @AuthenticationPrincipal User user, Map<String, Object> model) throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        if (!user.isAdmin())
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).toString();
         Data doc = dataService.createDoc(file, params);
         return "redirect:/document/" + doc.getId();
     }
@@ -114,6 +123,8 @@ public class MyDocumentsController {
     public String editDoc(
             @PathVariable String documentId,
             @AuthenticationPrincipal User user, Map<String, Object> model) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        if (!user.isAdmin())
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).toString();
         List<Data> docs = fileRepo.findById(Integer.parseInt(documentId));
         if (docs.size() > 0) {
             Data file = docs.get(0);
@@ -176,6 +187,8 @@ public class MyDocumentsController {
             @PathVariable String documentId,
             @RequestParam Map<String, String> params,
             @AuthenticationPrincipal User user, Map<String, Object> model) throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        if (!user.isAdmin())
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).toString();
         try {
             Data doc = dataService.updateDoc(documentId, file, params);
             sendMessage(doc);
@@ -190,6 +203,8 @@ public class MyDocumentsController {
             @PathVariable String dataID,
             @AuthenticationPrincipal User user,
             Map<String, Object> model) throws FileNotFoundException {
+        if (!user.isAdmin())
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).toString();
         dataService.deleteDoc(dataID, user);
         return "redirect:/main";
     }

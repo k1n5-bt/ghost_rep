@@ -2,12 +2,12 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <form id="form" class="select-wrapper" style="" action=${path} method="post" data-state="user">
         <div class="form-floating mb-3">
-            <input required type="email" name="email" class="form-control" id="floatingEmail" placeholder="Email"/>
+            <input required type="email" name="email" class="form-control" id="floatingEmail" placeholder="Электронная почта"/>
             <label for="floatingEmail">Электронная почта</label>
         </div>
         <#if isRegisterForm>
             <div class="form-floating mb-3">
-                <input required type="text" name="username" class="form-control" id="floatingInput" placeholder="name@example.com"/>
+                <input required type="text" name="username" class="form-control" id="floatingInput" placeholder="Логин"/>
                 <label for="floatingInput">Логин</label>
             </div>
             <div class="form-floating mb-3">
@@ -27,20 +27,20 @@
                 <option data-state="company" value="company">Компания</option>
             </select>
             <div class="form-floating mb-3 hide-if-company">
-                <input type="text" name="company" class="form-control" id="floatingCompany" placeholder="Urfu"/>
+                <input type="text" name="company" class="form-control" id="floatingCompany" placeholder="Название компании"/>
                 <label for="floatingCompany">Название компании</label>
             </div>
             <div class="form-floating mb-3 hide-if-company">
-                <input type="text" name="division" class="form-control" id="floatingDivision" placeholder=""/>
+                <input type="text" name="division" class="form-control" id="floatingDivision" placeholder="Подразделение компании"/>
                 <label for="floatingDivision">Подразделение компании</label>
             </div>
             <div class="form-floating mb-3 hide-if-company">
-                <input type="text" name="field" class="form-control" id="floatingField" placeholder=""/>
+                <input type="text" name="field" class="form-control" id="floatingField" placeholder="Деятельность компании"/>
                 <label for="floatingField">Деятельность компании</label>
             </div>
         </#if>
         <div class="form-floating mb-3">
-            <input required type="password" name="password" class="form-control" id="floatingPassword" placeholder="Password"/>
+            <input required type="password" name="password" class="form-control" id="floatingPassword" placeholder="Пароль"/>
             <label for="floatingPassword">Пароль</label>
         </div>
         <input type="hidden" name="_csrf" value="${_csrf.token}"/>
