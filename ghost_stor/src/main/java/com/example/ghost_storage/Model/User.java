@@ -170,6 +170,10 @@ public class User implements UserDetails {
         return name;
     }
 
+    public String getFullName() {
+        return String.format("%s %s %s", getSurname(), getName(), getPatronymic().equals("") ? "\r" : getPatronymic());
+    }
+
     public void setName(String name) {
         this.name = name;
     }
