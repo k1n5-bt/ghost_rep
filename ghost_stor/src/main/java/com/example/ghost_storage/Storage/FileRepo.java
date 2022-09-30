@@ -1,8 +1,6 @@
 package com.example.ghost_storage.Storage;
 
 import com.example.ghost_storage.Model.Data;
-import com.example.ghost_storage.Model.GhostRelation;
-import com.example.ghost_storage.Model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -46,4 +44,7 @@ public interface FileRepo extends JpaRepository<Data, Long> {
             String modifications,
             String status
     );
+
+    @Query(value = "select * from data where id in (select id from favorites where (cast(favorites_id as varchar) LIKE ?1))", nativeQuery = true)
+    List<Data> findFavoritesData(String user_id);
 }

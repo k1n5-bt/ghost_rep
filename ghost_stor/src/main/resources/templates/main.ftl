@@ -1,9 +1,15 @@
 <#import "parts/common.ftl" as c>
+<#import "parts/search.ftl" as s>
+
 <#include "parts/security.ftl">
 
 <@c.page>
-    <#include "parts/search.ftl">
-
+    <@s.search>
+        <div>
+            <input type="checkbox" id="favorites" name="qwe">
+            <label for="favorites">Показывать только избранные</label>
+        </div>
+    </@s.search>
     <div class = "card-group">
         <#list messages as message>
             <div class="col-md-6 col-xl-2">
@@ -30,4 +36,49 @@
             Не найдено файлов
         </#list>
     </div>
+    <script type="text/javascript">
+        function func() {
+        var params = window
+                            .location
+                            .search
+                            .replace('?','')
+                            .split('&')
+                            .reduce(
+                                function(p,e){
+                                    var a = e.split('=');
+                                    p[ decodeURIComponent(a[0])] = decodeURIComponent(a[1]);
+                                    return p;
+                                },
+                                {}
+                            );
+          if (params["isFavorites"] == "true"){
+              document.location.href = '/main';
+          }
+          else {
+              document.location.href = '/main?isFavorites=true';
+          }
+        }
+        document.getElementById('favorites').addEventListener('click', func);
+    </script>
+    <script type="text/javascript">
+        var params = window
+                    .location
+                    .search
+                    .replace('?','')
+                    .split('&')
+                    .reduce(
+                        function(p,e){
+                            var a = e.split('=');
+                            p[ decodeURIComponent(a[0])] = decodeURIComponent(a[1]);
+                            return p;
+                        },
+                        {}
+                    );
+        if (params["isFavorites"] == "true"){
+          document.getElementById('favorites').checked = true
+        }
+        else {
+          document.getElementById('favorites').checked = false
+        }
+    </script>
 </@c.page>

@@ -216,7 +216,7 @@ public class Data {
     }
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @CollectionTable(name = "favorites", joinColumns = @JoinColumn(name = "data_id"))
+    @CollectionTable(name = "favorites", joinColumns = @JoinColumn(name = "id"))
     private List<User> favorites = new ArrayList<User>();
 
     private String codeName;
