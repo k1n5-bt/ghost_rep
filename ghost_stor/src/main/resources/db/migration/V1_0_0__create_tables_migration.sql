@@ -10,8 +10,6 @@ create table data
     active_links_first_redaction        varchar(255),
     adoption_date                       varchar(255),
     adoption_date_first_redaction       varchar(255),
-    changes                             varchar(255),
-    changes_first_redaction             varchar(255),
     code_name                           varchar(255),
     contents                            varchar(255),
     contents_first_redaction            varchar(255),

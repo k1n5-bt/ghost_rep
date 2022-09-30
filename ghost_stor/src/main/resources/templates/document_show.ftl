@@ -13,26 +13,33 @@
             </a><br>
         </#if>
     </div>
-    <div style="display: flex">
+    <div>
         <#if isAdmin>
-            <a href="/document/${document.id}/edit">
-                <button class="btn btn-primary" style="margin: 0 10px 10px 0;">Изменить</button>
-            </a><br>
-            <a href="/document/${document.id}/replace">
-                <button class="btn btn-primary" style="margin: 0 10px 10px;" onclick="showQuestion('replace')">
-                    Заменить
-                </button>
-            </a><br>
-            <a href="/document/${document.id}/archive">
-                <button class="btn btn-primary" style="margin: 0 10px 10px;" onclick="showQuestion('archive')">
-                    Отменить
-                </button>
-            </a><br>
-            <a href="/delete/${document.id}">
-                <button class="btn btn-primary" style="margin: 0 10px 10px;" onclick="showQuestion('delete')">Удалить
-                    полностью
-                </button>
-            </a><br>
+            <div style="display: flex">
+                <a href="/document/${document.id}/edit">
+                    <button class="btn btn-primary" style="margin: 0 10px 10px 0;">Актуализирновать данные</button>
+                </a><br>
+                <a href="/document/${document.id}/edit">
+                    <button class="btn btn-primary" style="margin: 0 10px 10px;">Исправить данные</button>
+                </a><br>
+            </div>
+            <div style="display: flex">
+                <a href="/document/${document.id}/replace">
+                    <button class="btn btn-primary" style="margin: 0 10px 10px 0;" onclick="showQuestion('replace')">
+                        Заменить
+                    </button>
+                </a><br>
+                <a href="/document/${document.id}/archive">
+                    <button class="btn btn-primary" style="margin: 0 10px 10px;" onclick="showQuestion('archive')">
+                        Отменить
+                    </button>
+                </a><br>
+                <a href="/delete/${document.id}">
+                    <button class="btn btn-primary" style="margin: 0 10px 10px;" onclick="showQuestion('delete')">Удалить
+                        полностью
+                    </button>
+                </a><br>
+            </div>
         </#if>
     </div>
     <#if document.filename != "">

@@ -54,7 +54,10 @@ public class MyDocumentsController {
             @PathVariable String documentId,
             @AuthenticationPrincipal User user,
             Map<String, Object> model) throws FileNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
-        Data file = fileRepo.findById(Integer.parseInt(documentId)).get(0);
+        int id =  Integer.parseInt(documentId);
+        Data file = fileRepo.findById(id).get(0);
+        if (file.getState() == Data.State.CANCELED)
+            return "redirect:/main";
         Map<String, String[]> fields = file.getAllValues();
         model.put("document", file);
         model.put("fileName", Data.fieldNames());
@@ -79,15 +82,11 @@ public class MyDocumentsController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).toString();
         Data file = fileRepo.findById(Integer.parseInt(documentId)).get(0);
         Map<String, String[]> fields = file.getAllValues();
-
-        if (file.getState() != Data.State.CANCELED)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).toString();
         model.put("document", file);
         model.put("fileName", Data.fieldNames());
         model.put("levels", Data.acceptanceLevels());
         model.put("fields", fields);
         model.put("fieldNames", file.fieldNames());
-        model.put("levels", Data.acceptanceLevels());
         model.put("ruFieldNames", file.ruFieldNames());
         model.put("activeLinks", dataService.getActiveLinkNames(file));
         model.put("inactiveLinks", file.getInactiveLinks());
@@ -128,6 +127,8 @@ public class MyDocumentsController {
         List<Data> docs = fileRepo.findById(Integer.parseInt(documentId));
         if (docs.size() > 0) {
             Data file = docs.get(0);
+            if (file.getState() == Data.State.CANCELED)
+                return "redirect:/main";
             Map<String, String> lastFields = file.getLastValues();
             model.put("document", file);
             model.put("levels", Data.acceptanceLevels());
@@ -202,7 +203,7 @@ public class MyDocumentsController {
     public String delete(
             @PathVariable String dataID,
             @AuthenticationPrincipal User user,
-            Map<String, Object> model) throws FileNotFoundException {
+            Map<String, Object> model) throws FileNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         if (!user.isAdmin())
             return ResponseEntity.status(HttpStatus.FORBIDDEN).toString();
         dataService.deleteDoc(dataID, user);
@@ -218,6 +219,8 @@ public class MyDocumentsController {
         List<Data> docs = fileRepo.findById(Integer.parseInt(documentId));
         if (docs.size() > 0) {
             Data file = docs.get(0);
+            if (file.getState() != Data.State.CANCELED)
+                return "redirect:/main";
             dataService.archiveDocument(file);
             sendMessage(file);
             return "redirect:/archive";
@@ -236,7 +239,7 @@ public class MyDocumentsController {
         if (docs.size() > 0) {
             Data file = docs.get(0);
             if (file.getState() == Data.State.CANCELED)
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).toString();
+                return "redirect:/main";
             sendMessage(file);
             Map<String, String> lastFields = file.getLastValues();
             model.put("parentDocDesc", "Взамен " + file.getFileDesc());

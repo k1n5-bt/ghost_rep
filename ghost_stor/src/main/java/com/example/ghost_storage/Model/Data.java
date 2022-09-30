@@ -55,21 +55,6 @@ public class Data {
         setState(State.ACTIVE);
     }
 
-//    public Data(String name, String fileDesc, String OKCcode, String OKPDcode, String adoptionDate, String introductionDate, String developer, String predecessor, String contents, String levelOfAcceptance, String changes, String status, String referencesAmount) {
-//        this.name = name;
-//        this.fileDesc = fileDesc;
-//        this.OKCcode = OKCcode;
-//        this.OKPDcode = OKPDcode;
-//        this.adoptionDate = adoptionDate;
-//        this.introductionDate = introductionDate;
-//        this.developer = developer;
-//        this.predecessor = predecessor;
-//        this.contents = contents;
-//        this.levelOfAcceptance = levelOfAcceptance;
-//        this.changes = changes;
-//        this.status = status;
-//    }
-
     public static String[] fieldNames() {
         String[] arr = {
                 "fileDesc",
@@ -86,7 +71,6 @@ public class Data {
                 "levelOfAcceptance",
                 "contents",
                 "normReferences",
-                "changes",
                 "modifications",
                 "status"
         };
@@ -105,8 +89,7 @@ public class Data {
             put("predecessor", "Принят взамен");
             put("contents", "Текст документа");
             put("levelOfAcceptance", "Уровень принятия");
-            put("changes", "Изменения");
-            put("status", "Действующий/отменен/заменен");
+            put("status", "Действующий/Отменен/Заменен");
             put("headContent", "Содержание");
             put("keywords", "Ключевые слова");
             put("keyPhrases", "Ключевые фразы");
@@ -128,12 +111,10 @@ public class Data {
             put("predecessor", "Predecessor");
             put("contents", "Contents");
             put("levelOfAcceptance", "LevelOfAcceptance");
-            put("changes", "Changes");
             put("status", "Status");
             put("headContent", "HeadContent");
             put("keywords", "Keywords");
             put("keyPhrases", "KeyPhrases");
-//            put("normReferences", "NormReferences");
             put("modifications", "Modifications");
         }};
         return map;
@@ -151,12 +132,10 @@ public class Data {
             put("predecessor", "");
             put("contents", "");
             put("levelOfAcceptance", "");
-            put("changes", "");
             put("status", "");
             put("headContent", "");
             put("keywords", "");
             put("keyPhrases", "");
-//            put("normReferences", "");
             put("modifications", "");
         }};
         return map;
@@ -249,7 +228,6 @@ public class Data {
     private String predecessor;
     private String contents;
     private String levelOfAcceptance;
-    private String changes;
     private String status;
     private String nameFirstRedaction;
     private String fileDescFirstRedaction;
@@ -261,7 +239,6 @@ public class Data {
     private String predecessorFirstRedaction;
     private String contentsFirstRedaction;
     private String levelOfAcceptanceFirstRedaction;
-    private String changesFirstRedaction;
     private String statusFirstRedaction;
     private String headContent;
     private String keywords;
@@ -311,11 +288,6 @@ public class Data {
     public void setInactiveLinksFirstRedaction(String inactiveLinksFirstRedaction) {
         this.inactiveLinksFirstRedaction = inactiveLinksFirstRedaction;
     }
-
-
-
-    //    private String normReferences;
-    //    private String normReferencesFirstRedaction;
 
     public String getHeadContent() {
         return headContent;
@@ -461,14 +433,6 @@ public class Data {
         this.levelOfAcceptanceFirstRedaction = levelOfAcceptanceFirstRedaction;
     }
 
-    public String getChangesFirstRedaction() {
-        return changesFirstRedaction;
-    }
-
-    public void setChangesFirstRedaction(String changesFirstRedaction) {
-        this.changesFirstRedaction = changesFirstRedaction;
-    }
-
     public String getStatusFirstRedaction() {
         return statusFirstRedaction;
     }
@@ -583,14 +547,6 @@ public class Data {
 
     public void setLevelOfAcceptance(String levelOfAcceptance) {
         this.levelOfAcceptance = levelOfAcceptance;
-    }
-
-    public String getChanges() {
-        return changes;
-    }
-
-    public void setChanges(String changes) {
-        this.changes = changes;
     }
 
     public String getStatus() {

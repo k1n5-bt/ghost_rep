@@ -57,17 +57,17 @@ public class DataService {
         createRelations(doc, activeLinksIds);
         if (params.containsKey("parentDocId")) {
             int parentDocId = Integer.parseInt(params.get("parentDocId"));
-            replaceDoc(parentDocId, doc.getId());
-
+            replaceDoc(parentDocId, doc.getId(), doc.getLastValues().get("fileDesc"));
         }
         return doc;
     }
 
-    public void replaceDoc(int oldDocId, int newDocId) {
+    public void replaceDoc(int oldDocId, int newDocId, String newDocDesc) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         List<Data> docs = fileRepo.findById(oldDocId);
         if (docs.size() > 0) {
             Data file = docs.get(0);
             file.setState(Data.State.CANCELED);
+            setLastName(file, "status", "Заменен " + newDocDesc);
             fileRepo.save(file);
 
             List<GhostRelation> relations = relationRepo.findByDataId(oldDocId);
@@ -224,8 +224,10 @@ public class DataService {
         removeRelations(file, removedIds);
     }
 
-    public void archiveDocument(Data doc) {
+    public void archiveDocument(Data doc) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         doc.setState(Data.State.CANCELED);
+        setLastName(doc, "status", "Отменен");
+
         fileRepo.save(doc);
 
         List<GhostRelation> relations = relationRepo.findByDataId(doc.getId());
@@ -294,7 +296,7 @@ public class DataService {
         }
     }
 
-    public void deleteDoc(String dataID, User user) throws FileNotFoundException {
+    public void deleteDoc(String dataID, User user) throws FileNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         List<Data> dataList = fileRepo.findById(Integer.parseInt(dataID));
         if (dataList.isEmpty()) {
             return;
