@@ -33,7 +33,7 @@
                                         <#if lastFields??> value="${lastFields[key]}" </#if>
                                 >
                             <#elseif key == "headContent" || key == "keywords" || key == "keyPhrases">
-                                <textarea name=${key} id=${key} form="form"><#if lastFields??>${lastFields[key]}</#if></textarea>
+                                <textarea name=${key} id=${key} form="form"><#if lastFields??>${(lastFields[key] == '-')?string("", lastFields[key])}</#if></textarea>
                             <#elseif key == "normReferences">
                                 <div class="autocomplete" style="width:200px;" id="normRefBlock">
                                     <button type="button" onclick="createInput('')" style='margin-bottom: 10px;'>+</button>
@@ -41,14 +41,16 @@
                             <#elseif key == "predecessor">
                                 <input class="form-control" type="text" name=${key} id=${key}
                                         <#if lastFields??>
-                                            value="${lastFields[key]}"
+                                            value="${(lastFields[key] == '-')?string("", lastFields[key])}"
                                         <#elseif parentDocDesc??>
                                             value="${parentDocDesc}"
                                         </#if>
                                 >
                             <#else>
                                 <input class="form-control" type="text" name=${key} id=${key}
-                                        <#if lastFields??> value="${lastFields[key]}" </#if>
+                                        <#if lastFields??>
+                                            value="${(lastFields[key] == '-')?string("", lastFields[key])}"
+                                        </#if>
                                 >
                             </#if>
                         </td>
