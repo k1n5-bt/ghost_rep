@@ -30,6 +30,9 @@
                 </#if>
             </ul>
             <div class="navbar-text me-3">${name}</div>
+            <#if name == "">
+                <@l.loginButton />
+            </#if>
             <#if name != "">
                 <@l.logout />
             </#if>

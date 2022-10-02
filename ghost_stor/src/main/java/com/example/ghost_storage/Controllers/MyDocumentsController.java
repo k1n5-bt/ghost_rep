@@ -219,8 +219,6 @@ public class MyDocumentsController {
         List<Data> docs = fileRepo.findById(Integer.parseInt(documentId));
         if (docs.size() > 0) {
             Data file = docs.get(0);
-            if (file.getState() != Data.State.CANCELED)
-                return "redirect:/main";
             dataService.archiveDocument(file);
             sendMessage(file);
             return "redirect:/archive";

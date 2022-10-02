@@ -79,8 +79,9 @@ create table usr
 
 create table favorites
 (
-    data_id      int4 not null,
-    favorites_id int8 not null
+    id      int4 not null,
+    favorites_id int8 not null,
+    primary key (id)
 );
 
 alter table if exists data
@@ -88,6 +89,6 @@ alter table if exists data
 alter table if exists favorites
     add constraint FKnlpo1843llbxhi5nl80gao0mu foreign key (favorites_id) references usr;
 alter table if exists favorites
-    add constraint FKamd4jwxn0g1sxq6jnoxoqgpqq foreign key (data_id) references data;
+    add constraint FKamd4jwxn0g1sxq6jnoxoqgpqq foreign key (id) references data;
 alter table if exists user_role
     add constraint FKfpm8swft53ulq2hl11yplpr5 foreign key (user_id) references usr;

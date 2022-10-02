@@ -360,7 +360,6 @@ public class DataService {
                 "keyPhrases",
                 "levelOfAcceptance",
                 "contents",
-                "changes",
                 "modifications",
                 "status"
         };
@@ -378,7 +377,6 @@ public class DataService {
             put("predecessor", "Принят взамен");
             put("contents", "Ссылка на документ");
             put("levelOfAcceptance", "Уровень принятия");
-            put("changes", "Изменения");
             put("status", "Статус");
             put("headContent", "Содержание");
             put("keywords", "Ключевые слова");
@@ -402,7 +400,6 @@ public class DataService {
             li(params.get("keyPhrases")),
             li(params.get("levelOfAcceptance")),
             li(params.get("contents")),
-            li(params.get("changes")),
             li(params.get("modifications")),
             li(params.get("status"))
         );

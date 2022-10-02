@@ -3,6 +3,7 @@ package com.example.ghost_storage.Services;
 import com.example.ghost_storage.Model.Role;
 import com.example.ghost_storage.Model.User;
 import com.example.ghost_storage.Storage.UserRepo;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,6 +17,12 @@ import java.util.UUID;
 public class UserService implements UserDetailsService {
     private final UserRepo userRepo;
     private final MailSender mailSender;
+
+    @Value("${server.port}")
+    private String port;
+
+    @Value("${server.ip}")
+    private String ipAddress;
 
     public UserService(UserRepo userRepo, MailSender mailSender) {
         this.userRepo = userRepo;
@@ -40,9 +47,11 @@ public class UserService implements UserDetailsService {
         userRepo.save(user);
 
         if (!StringUtils.isEmpty(user.getEmail())) {
-            String message = String.format("Hello, %s! \n" +
-                    "Welcome to Ghost Storage. Please, visit link for activation: http://localhost:8080/activate/%s",
-                    user.getUsername(),
+            String message = String.format("Здравствуйте, %s! \n" +
+                    "Спасибо за регистрацию! Перейдите, пожалуйста, по ссылке для активации аккаунта: http://%s:%s/activate/%s",
+                    user.getFullName(),
+                    ipAddress,
+                    port,
                     user.getActivationCode());
 
             mailSender.send(user.getEmail(), "Activation code", message);

@@ -4,10 +4,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "usr")
@@ -171,6 +168,10 @@ public class User implements UserDetails {
 
     public String getName() {
         return name;
+    }
+
+    public String getFullName() {
+        return String.format("%s %s %s", getSurname(), getName(), getPatronymic().equals("") ? "\r" : getPatronymic());
     }
 
     public void setName(String name) {

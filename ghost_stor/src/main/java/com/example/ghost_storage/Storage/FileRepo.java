@@ -1,8 +1,6 @@
 package com.example.ghost_storage.Storage;
 
 import com.example.ghost_storage.Model.Data;
-import com.example.ghost_storage.Model.GhostRelation;
-import com.example.ghost_storage.Model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -25,9 +23,8 @@ public interface FileRepo extends JpaRepository<Data, Long> {
             "and (key_phrases LIKE ?11 or key_phrases_first_redaction LIKE ?11)" +
             "and (level_of_acceptance LIKE ?12 or level_of_acceptance_first_redaction LIKE ?12)" +
             "and (contents LIKE ?13 or contents_first_redaction LIKE ?13)" +
-            "and (changes LIKE ?14 or changes_first_redaction LIKE ?14)" +
-            "and (modifications LIKE ?15 or modifications_first_redaction LIKE ?15)" +
-            "and (status LIKE ?16 or status_first_redaction LIKE ?16)" +
+            "and (modifications LIKE ?14 or modifications_first_redaction LIKE ?14)" +
+            "and (status LIKE ?15 or status_first_redaction LIKE ?15)" +
             "and (state_id = 100)",
             nativeQuery = true)
     List<Data> search(
@@ -44,8 +41,10 @@ public interface FileRepo extends JpaRepository<Data, Long> {
             String keyPhrases,
             String levelOfAcceptance,
             String contents,
-            String changes,
             String modifications,
             String status
     );
+
+    @Query(value = "select * from data where id in (select id from favorites where (cast(favorites_id as varchar) LIKE ?1))", nativeQuery = true)
+    List<Data> findFavoritesData(String user_id);
 }
