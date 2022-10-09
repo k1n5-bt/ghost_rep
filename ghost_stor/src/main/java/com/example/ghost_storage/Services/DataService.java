@@ -185,8 +185,6 @@ public class DataService {
     }
 
     public void updateLinks(Data file, Map<String, String> params) {
-        int[] oldActiveLinksIds = file.getActiveLinks();
-
         Map<String, Integer> descs = this.getGhostDesc();
         List<Integer> activeLinksIds = new ArrayList<>();
         List<String> inactiveLinks = new ArrayList<>();
@@ -202,9 +200,115 @@ public class DataService {
                 }
             }
         }
-        createAndRemoveRelations(file, Arrays.stream(oldActiveLinksIds).boxed().collect(Collectors.toList()), activeLinksIds);
-        file.setActiveLinks(activeLinksIds);
-        file.setInactiveLinks(inactiveLinks);
+        updateLinks(file,
+                    activeLinksIds.stream().mapToInt(i->i).toArray(),
+                    inactiveLinks.toArray(new String[0]));
+//        updateActiveLinks(file, activeLinksIds);
+//        updateInactiveLinks(file, inactiveLinks);
+
+//        file.setActiveLinks(activeLinksIds);
+//        file.setInactiveLinks(inactiveLinks);
+    }
+
+    public void updateLinks(Data file,
+                            int[] newActiveLinks,
+                            String[] newInactiveLinks) {
+        int[] oldActiveLinks = getLastActiveLinkValue(file);
+        String[] oldInactiveLinks = getLastInactiveLinkValue(file);
+        boolean updateLinks = checkLinkChanges(newActiveLinks, oldActiveLinks) &&
+                checkLinkChanges(newInactiveLinks, oldInactiveLinks);
+
+    }
+
+    // возвращает сортированный массив
+    public int[] getLastActiveLinkValue(Data file) {
+        int[] activeLinksLast;
+        int[] activeLinks = file.getActiveLinks();
+        int[] activeLinksFR = file.getActiveLinksFirstRedaction();
+
+        if (activeLinksFR.length == 1 && activeLinksFR[0] == 0) { // перевая редакция не инициализирована еще
+            activeLinksLast = activeLinks;
+        } else {
+            activeLinksLast = activeLinksFR;
+        }
+        Arrays.sort(activeLinksLast);
+        return activeLinksLast;
+    }
+
+    // возвращает сортированный массив
+    public String[] getLastInactiveLinkValue(Data file) {
+        String[] inactiveLinksLast;
+        String[] inactiveLinks = file.getInactiveLinks();
+        String[] inactiveLinksFR = file.getInactiveLinksFirstRedaction();
+
+        if (inactiveLinksFR.length == 1 && inactiveLinksFR[0].equals("-")) { // перевая редакция не инициализирована еще
+            inactiveLinksLast = inactiveLinks;
+        } else {
+            inactiveLinksLast = inactiveLinksFR;
+        }
+        Arrays.sort(inactiveLinksLast);
+        return inactiveLinksLast;
+    }
+
+    public boolean checkLinkChanges(Object newArr, Object oldArr) {
+        return newArr.equals(oldArr);
+    }
+
+    public void updateActiveLinks(Data file, List<Integer> newActiveLinksIds) {
+        Collections.sort(newActiveLinksIds);
+        int[] activeLinksLast;
+        int[] activeLinks = file.getActiveLinks();
+        int[] activeLinksFR = file.getActiveLinksFirstRedaction();
+
+        if (activeLinksFR.length == 1 && activeLinksFR[0] == 0) { // перевая редакция не инициализирована еще
+            activeLinksLast = activeLinks;
+            List<Integer> lastLinks = Arrays.stream(activeLinksLast).boxed().collect(Collectors.toList());
+            Collections.sort(lastLinks);
+            if (!newActiveLinksIds.equals(lastLinks)) {
+                if (activeLinksLast.length != 0) { // записывать в начальное значение
+                    file.setActiveLinks(newActiveLinksIds);
+                } else { // записывать в первую редакцию
+                    file.setActiveLinksFirstRedaction(newActiveLinksIds);
+                }
+            }
+        } else { // записывать в первую редакцию и смещать
+            activeLinksLast = activeLinksFR;
+            List<Integer> lastLinks = Arrays.stream(activeLinksLast).boxed().collect(Collectors.toList());
+            Collections.sort(lastLinks);
+            if (!newActiveLinksIds.equals(lastLinks)) {
+                file.setActiveLinks(Arrays.stream(activeLinksFR).boxed().collect(Collectors.toList()));
+                file.setActiveLinksFirstRedaction(newActiveLinksIds);
+            }
+        }
+        createAndRemoveRelations(file, Arrays.stream(activeLinksLast).boxed().collect(Collectors.toList()), newActiveLinksIds);
+    }
+
+    public void updateInactiveLinks(Data file, List<String> newInactiveLinks) {
+        Collections.sort(newInactiveLinks);
+        String[] inactiveLinksLast;
+        String[] inactiveLinks = file.getInactiveLinks();
+        String[] inactiveLinksFR = file.getInactiveLinksFirstRedaction();
+
+        if (inactiveLinksFR.length == 1 && inactiveLinksFR[0].equals("-")) { // перевая редакция не инициализирована еще
+            inactiveLinksLast = inactiveLinks;
+            List<String> lastLinks = new ArrayList<>(Arrays.asList(inactiveLinksLast));
+            Collections.sort(lastLinks);
+            if (!newInactiveLinks.equals(inactiveLinksLast)) {
+                if (inactiveLinksLast.length == 0) { // записывать в начальное значение
+                    file.setInactiveLinks(newInactiveLinks);
+                } else { // записывать в первую редакцию
+                    file.setInactiveLinksFirstRedaction(newInactiveLinks);
+                }
+            }
+        } else { // записывать в первую редакцию и смещать
+            inactiveLinksLast = inactiveLinksFR;
+            List<String> lastLinks = new ArrayList<>(Arrays.asList(inactiveLinksLast));
+            Collections.sort(lastLinks);
+            if (!newInactiveLinks.equals(lastLinks)) {
+                file.setInactiveLinks(new ArrayList<>(Arrays.asList(inactiveLinksFR)));
+                file.setInactiveLinksFirstRedaction(newInactiveLinks);
+            }
+        }
     }
 
     public void createAndRemoveRelations(Data file, List<Integer> oldIds, List<Integer> newIds) {
@@ -235,7 +339,7 @@ public class DataService {
             List<Data> files = fileRepo.findById(relation.getReferralDataId());
             if (files.size() > 0) {
                 Data file = files.get(0);
-                deactivateActiveLink(file, doc.getId(), doc.getFileDesc());
+                removeActiveLink(file, doc.getId(), doc.getFileDesc());
                 fileRepo.save(file);
             }
             relationRepo.delete(relation);
@@ -267,6 +371,17 @@ public class DataService {
         List<String> newDesc = new ArrayList<>(List.of(oldDesc));
         newDesc.add(linkDesc);
         doc.setInactiveLinks(newDesc);
+    }
+
+    public void removeActiveLink(Data doc, int linkId, String linkDesc) {
+        int[] oldIds = doc.getActiveLinks();
+        List<Integer> newIds = new ArrayList<>();
+        for (int id : oldIds) {
+            if (id != linkId) {
+                newIds.add(id);
+            }
+        }
+        doc.setActiveLinks(newIds);
     }
 
     private String createFile(MultipartFile file) throws IOException {

@@ -283,5 +283,4 @@ public class MyDocumentsController {
         model.put("levels", Data.acceptanceLevels());
         return "search_page";
     }
-
 }

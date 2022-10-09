@@ -257,7 +257,7 @@ public class Data {
 
     public int[] getActiveLinks() {
         String strLinksIds = activeLinks;
-        if (!strLinksIds.equals("[]")) {
+        if (strLinksIds != null && !strLinksIds.equals("[]")) {
             return Arrays.stream(strLinksIds.substring(1, strLinksIds.length()-1).split(","))
                     .map(String::trim).mapToInt(Integer::parseInt).toArray();
         } else {
@@ -276,17 +276,32 @@ public class Data {
         this.inactiveLinks = String.join("#", inactiveLinks);
     }
 
-    public String getActiveLinksFirstRedaction() {
-        return activeLinksFirstRedaction;
+    public int[]  getActiveLinksFirstRedaction() {
+        String strLinksIds = activeLinksFirstRedaction;
+        if (strLinksIds == null) {
+            return new int[]{0};
+        } else if (!strLinksIds.equals("[]")) {
+            return Arrays.stream(strLinksIds.substring(1, strLinksIds.length()-1).split(","))
+                    .map(String::trim).mapToInt(Integer::parseInt).toArray();
+        } else {
+            return new int[0];
+        }
     }
-    public void setActiveLinksFirstRedaction(String activeLinksFirstRedaction) {
-        this.activeLinksFirstRedaction = activeLinksFirstRedaction;
+    public void setActiveLinksFirstRedaction(List<Integer> activeLinksIds) {
+        this.activeLinksFirstRedaction = activeLinksIds.toString();
     }
-    public String getInactiveLinksFirstRedaction() {
-        return inactiveLinksFirstRedaction;
+    public String[] getInactiveLinksFirstRedaction() {
+        String str = inactiveLinksFirstRedaction;
+        if (str == null) {
+            return new String[]{"-"};
+        } else if (!str.equals("")) {
+            return str.split("#");
+        } else {
+            return new String[0];
+        }
     }
-    public void setInactiveLinksFirstRedaction(String inactiveLinksFirstRedaction) {
-        this.inactiveLinksFirstRedaction = inactiveLinksFirstRedaction;
+    public void setInactiveLinksFirstRedaction(List<String> inactiveLinks) {
+        this.inactiveLinksFirstRedaction = String.join("#", inactiveLinks);
     }
 
     public String getHeadContent() {
