@@ -67,7 +67,9 @@ public class MyDocumentsController {
         model.put("ruFieldNames", file.ruFieldNames());
 
         model.put("activeLinks", dataService.getActiveLinkNames(file));
-        model.put("inactiveLinks", file.getInactiveLinks());
+        model.put("activeLinks_f", dataService.getActiveLinkFRNames(file));
+        model.put("inactiveLinks", dataService.getInactiveLinkNames(file));
+        model.put("inactiveLinks_f", dataService.getInactiveLinkFRNames(file));
 
         return "document_show";
     }
@@ -137,8 +139,8 @@ public class MyDocumentsController {
             model.put("ruFieldNames", Data.ruFieldNames());
 
             model.put("ghostDescs", dataService.getGhostDesc().keySet().toArray(new String[0]));
-            model.put("activeLinks", dataService.getActiveLinkNames(file));
-            model.put("inactiveLinks", file.getInactiveLinks());
+            model.put("activeLinks", dataService.getLastActiveLinkNames(file));
+            model.put("inactiveLinks", dataService.getLastInactiveLinkNames(file));
             return "document_form";
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).toString();
@@ -283,5 +285,4 @@ public class MyDocumentsController {
         model.put("levels", Data.acceptanceLevels());
         return "search_page";
     }
-
 }

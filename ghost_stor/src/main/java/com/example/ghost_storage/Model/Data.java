@@ -257,36 +257,68 @@ public class Data {
 
     public int[] getActiveLinks() {
         String strLinksIds = activeLinks;
-        if (!strLinksIds.equals("[]")) {
+        if (strLinksIds.equals("[]")) {
+            return new int[]{0};
+        } else {
+            return Arrays.stream(strLinksIds.substring(1, strLinksIds.length()-1).split(","))
+                    .map(String::trim).mapToInt(Integer::parseInt).toArray();
+        }
+    }
+    public void setActiveLinks(List<Integer> activeLinksIds) {
+        this.activeLinks = activeLinksIds.toString();
+    }
+    public void setActiveLinks(int[] activeLinksIds) {
+        this.activeLinks = Arrays.toString(activeLinksIds);
+    }
+
+    public String[] getInactiveLinks() {
+        String str = inactiveLinks;
+        if (str.equals("")) {
+            return new String[]{"-"};
+        } else {
+            return str.split("#");
+        }
+    }
+    public void setInactiveLinks(List<String> inactiveLinks) {
+        this.inactiveLinks = String.join("#", inactiveLinks);
+    }
+    public void setInactiveLinks(String[] inactiveLinks) {
+        this.inactiveLinks = String.join("#", inactiveLinks);
+    }
+
+    public int[]  getActiveLinksFirstRedaction() {
+        String strLinksIds = activeLinksFirstRedaction;
+        if (strLinksIds == null) {
+            return new int[]{0};
+        } else if (!strLinksIds.equals("[]")) {
             return Arrays.stream(strLinksIds.substring(1, strLinksIds.length()-1).split(","))
                     .map(String::trim).mapToInt(Integer::parseInt).toArray();
         } else {
             return new int[0];
         }
     }
-    public void setActiveLinks(List<Integer> activeLinksIds) {
-        this.activeLinks = activeLinksIds.toString();
+    public void setActiveLinksFirstRedaction(List<Integer> activeLinksIds) {
+        this.activeLinksFirstRedaction = activeLinksIds.toString();
     }
-
-    public String[] getInactiveLinks() {
-        String str = inactiveLinks;
-        return str.equals("") ? new String[0] : str.split("#");
+    public void setActiveLinksFirstRedaction(int[] activeLinksIds) {
+        String str = Arrays.toString(activeLinksIds);
+        this.activeLinksFirstRedaction = str;
     }
-    public void setInactiveLinks(List<String> inactiveLinks) {
-        this.inactiveLinks = String.join("#", inactiveLinks);
+    public String[] getInactiveLinksFirstRedaction() {
+        String str = inactiveLinksFirstRedaction;
+        if (str == null) {
+            return new String[]{"-"};
+        } else if (!str.equals("")) {
+            return str.split("#");
+        } else {
+            return new String[0];
+        }
     }
-
-    public String getActiveLinksFirstRedaction() {
-        return activeLinksFirstRedaction;
+    public void setInactiveLinksFirstRedaction(List<String> inactiveLinks) {
+        this.inactiveLinksFirstRedaction = String.join("#", inactiveLinks);
     }
-    public void setActiveLinksFirstRedaction(String activeLinksFirstRedaction) {
-        this.activeLinksFirstRedaction = activeLinksFirstRedaction;
-    }
-    public String getInactiveLinksFirstRedaction() {
-        return inactiveLinksFirstRedaction;
-    }
-    public void setInactiveLinksFirstRedaction(String inactiveLinksFirstRedaction) {
-        this.inactiveLinksFirstRedaction = inactiveLinksFirstRedaction;
+    public void setInactiveLinksFirstRedaction(String[] inactiveLinks) {
+        this.inactiveLinksFirstRedaction = String.join("#", inactiveLinks);
     }
 
     public String getHeadContent() {
