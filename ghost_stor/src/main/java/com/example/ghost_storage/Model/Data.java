@@ -257,22 +257,32 @@ public class Data {
 
     public int[] getActiveLinks() {
         String strLinksIds = activeLinks;
-        if (strLinksIds != null && !strLinksIds.equals("[]")) {
+        if (strLinksIds.equals("[]")) {
+            return new int[]{0};
+        } else {
             return Arrays.stream(strLinksIds.substring(1, strLinksIds.length()-1).split(","))
                     .map(String::trim).mapToInt(Integer::parseInt).toArray();
-        } else {
-            return new int[0];
         }
     }
     public void setActiveLinks(List<Integer> activeLinksIds) {
         this.activeLinks = activeLinksIds.toString();
     }
+    public void setActiveLinks(int[] activeLinksIds) {
+        this.activeLinks = Arrays.toString(activeLinksIds);
+    }
 
     public String[] getInactiveLinks() {
         String str = inactiveLinks;
-        return str.equals("") ? new String[0] : str.split("#");
+        if (str.equals("")) {
+            return new String[]{"-"};
+        } else {
+            return str.split("#");
+        }
     }
     public void setInactiveLinks(List<String> inactiveLinks) {
+        this.inactiveLinks = String.join("#", inactiveLinks);
+    }
+    public void setInactiveLinks(String[] inactiveLinks) {
         this.inactiveLinks = String.join("#", inactiveLinks);
     }
 
@@ -290,6 +300,10 @@ public class Data {
     public void setActiveLinksFirstRedaction(List<Integer> activeLinksIds) {
         this.activeLinksFirstRedaction = activeLinksIds.toString();
     }
+    public void setActiveLinksFirstRedaction(int[] activeLinksIds) {
+        String str = Arrays.toString(activeLinksIds);
+        this.activeLinksFirstRedaction = str;
+    }
     public String[] getInactiveLinksFirstRedaction() {
         String str = inactiveLinksFirstRedaction;
         if (str == null) {
@@ -301,6 +315,9 @@ public class Data {
         }
     }
     public void setInactiveLinksFirstRedaction(List<String> inactiveLinks) {
+        this.inactiveLinksFirstRedaction = String.join("#", inactiveLinks);
+    }
+    public void setInactiveLinksFirstRedaction(String[] inactiveLinks) {
         this.inactiveLinksFirstRedaction = String.join("#", inactiveLinks);
     }
 

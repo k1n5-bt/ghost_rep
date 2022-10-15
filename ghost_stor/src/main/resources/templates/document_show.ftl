@@ -71,6 +71,15 @@
                             <p style="margin-bottom: 0;">${ina_link}</p>
                         </#list>
                     </td>
+                    <td>
+                        <#list activeLinks_f?keys as a_link>
+                            <a href="/document/${activeLinks_f[a_link]}" class="dock_link">${a_link}</a>
+                            <br>
+                        </#list>
+                        <#list inactiveLinks_f as ina_link>
+                            <p style="margin-bottom: 0;">${ina_link}</p>
+                        </#list>
+                    </td>
                 <#else>
                     <td><p style="max-width: 400px; word-break: break-word; margin-bottom: 0px">${(fields[key][0] == '-')?string("", fields[key][0])}</p></td>
                     <td><p style="max-width: 400px; word-break: break-word; margin-bottom: 0px">${fields[key][1]}</p></td>
