@@ -82,7 +82,7 @@ public class DataService {
                 List<Data> files = fileRepo.findById(relation.getDataId());
                 if (files.size() > 0) {
                     Data ghost = files.get(0);
-                    deactivateActiveLink(file, ghost.getId(), ghost.getFileDesc());
+                    deactivateActiveLink(file, ghost.getId(), ghost.getLastDesc());
                     fileRepo.save(file);
                 }
                 relationRepo.delete(relation);
@@ -116,8 +116,8 @@ public class DataService {
         }
     }
 
-    public List<Integer> saveLinks(Data file, Map<String, String> params) {
-        Map<String, Integer> descs = this.getGhostDesc();
+    public List<Integer> saveLinks(Data file, Map<String, String> params) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        Map<String, Integer> descs = this.getGhostDescMap();
         List<Integer> activeLinksIds = new ArrayList<>();
         List<String> inactiveLinks = new ArrayList<>();
 
@@ -138,21 +138,6 @@ public class DataService {
         return activeLinksIds;
     }
 
-    public void createRelations(Data file, List<Integer> activeLinksIds) {
-        for (int linkId : activeLinksIds) {
-            GhostRelation relation = new GhostRelation(linkId, file.getId());
-            relationRepo.save(relation);
-        }
-    }
-
-    public void removeRelations(Data file, List<Integer> activeLinksIds) {
-        for (int linkId : activeLinksIds) {
-            List<GhostRelation> relations = relationRepo.findByDataIdAndReferralDataId(linkId, file.getId());
-            if (relations.size() > 0) {
-                relationRepo.delete(relations.get(0));
-            }
-        }
-    }
 
     public Data updateDoc(String documentId, MultipartFile file, Map<String, String> params) throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException, NotFoundException {
         List<Data> docs = fileRepo.findById(Integer.parseInt(documentId));
@@ -189,8 +174,8 @@ public class DataService {
         return doc;
     }
 
-    public void changeLinks(Data file, Map<String, String> params) {
-        Map<String, Integer> descs = this.getGhostDesc();
+    public void changeLinks(Data file, Map<String, String> params) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        Map<String, Integer> descs = this.getGhostDescMap();
         List<Integer> activeLinksIds = new ArrayList<>();
         List<String> inactiveLinks = new ArrayList<>();
 
@@ -208,11 +193,6 @@ public class DataService {
         updateLinks(file,
                     activeLinksIds.stream().mapToInt(i->i).toArray(),
                     inactiveLinks.toArray(new String[0]));
-//        updateActiveLinks(file, activeLinksIds);
-//        updateInactiveLinks(file, inactiveLinks);
-
-//        file.setActiveLinks(activeLinksIds);
-//        file.setInactiveLinks(inactiveLinks);updateLinks
     }
 
     public void updateLinks(Data file,
@@ -392,32 +372,6 @@ public class DataService {
                 file.setInactiveLinksFirstRedaction(newInactiveLinks);
                 break;
         }
-//
-//        Collections.sort(newInactiveLinks);
-//        String[] inactiveLinksLast;
-//        String[] inactiveLinks = file.getInactiveLinks();
-//        String[] inactiveLinksFR = file.getInactiveLinksFirstRedaction();
-//
-//        if (inactiveLinksFR.length == 1 && inactiveLinksFR[0].equals("-")) { // перевая редакция не инициализирована еще
-//            inactiveLinksLast = inactiveLinks;
-//            List<String> lastLinks = new ArrayList<>(Arrays.asList(inactiveLinksLast));
-//            Collections.sort(lastLinks);
-//            if (!newInactiveLinks.equals(inactiveLinksLast)) {
-//                if (inactiveLinks.length == 1 && inactiveLinks[0].equals("-")) { // записывать в начальное значение
-//                    file.setInactiveLinks(newInactiveLinks);
-//                } else { // записывать в первую редакцию
-//                    file.setInactiveLinksFirstRedaction(newInactiveLinks);
-//                }
-//            }
-//        } else { // записывать в первую редакцию и смещать
-//            inactiveLinksLast = inactiveLinksFR;
-//            List<String> lastLinks = new ArrayList<>(Arrays.asList(inactiveLinksLast));
-//            Collections.sort(lastLinks);
-//            if (!newInactiveLinks.equals(lastLinks)) {
-//                file.setInactiveLinks(new ArrayList<>(Arrays.asList(inactiveLinksFR)));
-//                file.setInactiveLinksFirstRedaction(newInactiveLinks);
-//            }
-//        }
     }
     public void updateInactiveLinks(Data file, List<String> newInactiveLinks) {
         Collections.sort(newInactiveLinks);
@@ -464,6 +418,22 @@ public class DataService {
         removeRelations(file, removedIds);
     }
 
+    public void createRelations(Data file, List<Integer> activeLinksIds) {
+        for (int linkId : activeLinksIds) {
+            GhostRelation relation = new GhostRelation(linkId, file.getId());
+            relationRepo.save(relation);
+        }
+    }
+
+    public void removeRelations(Data file, List<Integer> activeLinksIds) {
+        for (int linkId : activeLinksIds) {
+            List<GhostRelation> relations = relationRepo.findByDataIdAndReferralDataId(linkId, file.getId());
+            if (relations.size() > 0) {
+                relationRepo.delete(relations.get(0));
+            }
+        }
+    }
+
     public void archiveDocument(Data doc) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         doc.setState(Data.State.CANCELED);
         setLastName(doc, "status", "Отменен");
@@ -475,7 +445,7 @@ public class DataService {
             List<Data> files = fileRepo.findById(relation.getReferralDataId());
             if (files.size() > 0) {
                 Data file = files.get(0);
-                removeActiveLink(file, doc.getId(), doc.getFileDesc());
+                removeActiveLink(file, doc.getId(), doc.getLastDesc());
                 fileRepo.save(file);
             }
             relationRepo.delete(relation);
@@ -486,7 +456,7 @@ public class DataService {
             List<Data> files = fileRepo.findById(relation.getDataId());
             if (files.size() > 0) {
                 Data file = files.get(0);
-                deactivateActiveLink(doc, file.getId(), file.getFileDesc());
+                deactivateActiveLink(doc, file.getId(), file.getLastDesc());
                 fileRepo.save(doc);
             }
             relationRepo.delete(relation);
@@ -574,49 +544,58 @@ public class DataService {
         return canceledData;
     }
 
-    public Map<String, Integer> getGhostDesc() {
+    public Map<String, Integer> getGhostDescMap() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         List<Data> files = fileRepo.findByStateId(Data.State.ACTIVE.getValue());
         Map<String, Integer> dict = new HashMap<>();
         for (Data file : files) {
-            dict.put(file.getFileDesc(), file.getId());
+            dict.put(file.getLastDesc(), file.getId());
         }
         return  dict;
     }
 
-    public Map<String, Integer> getActiveLinkNames(Data file) {
+    public String[] getGhostDesc() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        List<Data> files = fileRepo.findByStateId(Data.State.ACTIVE.getValue());
+        String[] descArr = new String[files.size()];
+        for (int i = 0; i < descArr.length; i++) {
+            descArr[i] = files.get(i).getLastDesc();
+        }
+        return  descArr;
+    }
+
+    public Map<String, Integer> getActiveLinkNames(Data file) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         List<Data> docs = fileRepo.findByStateId(Data.State.ACTIVE.getValue());
         Map<String, Integer> dict = new HashMap<>();
         int[] ids = file.getActiveLinks();
 
         for (Data doc : docs) {
             if (Arrays.stream(ids).anyMatch(i -> i == doc.getId())) {
-                dict.put(doc.getFileDesc(), doc.getId());
+                dict.put(doc.getLastDesc(), doc.getId());
             }
         }
         return  dict;
     }
 
-    public Map<String, Integer> getActiveLinkFRNames(Data file) {
+    public Map<String, Integer> getActiveLinkFRNames(Data file) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         List<Data> docs = fileRepo.findByStateId(Data.State.ACTIVE.getValue());
         Map<String, Integer> dict = new HashMap<>();
         int[] ids = file.getActiveLinksFirstRedaction();
 
         for (Data doc : docs) {
             if (Arrays.stream(ids).anyMatch(i -> i == doc.getId())) {
-                dict.put(doc.getFileDesc(), doc.getId());
+                dict.put(doc.getLastDesc(), doc.getId());
             }
         }
         return  dict;
     }
 
-    public Map<String, Integer> getLastActiveLinkNames(Data file) {
+    public Map<String, Integer> getLastActiveLinkNames(Data file) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         List<Data> docs = fileRepo.findByStateId(Data.State.ACTIVE.getValue());
         Map<String, Integer> dict = new HashMap<>();
         int[] ids = getLastActiveLinkValue(file);
 
         for (Data doc : docs) {
             if (Arrays.stream(ids).anyMatch(i -> i == doc.getId())) {
-                dict.put(doc.getFileDesc(), doc.getId());
+                dict.put(doc.getLastDesc(), doc.getId());
             }
         }
         return  dict;

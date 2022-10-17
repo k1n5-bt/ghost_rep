@@ -2,6 +2,7 @@ package com.example.ghost_storage.Controllers;
 
 import com.example.ghost_storage.Services.DataService;
 import com.example.ghost_storage.Services.MailSender;
+import com.example.ghost_storage.Services.RawEditService;
 import com.example.ghost_storage.Storage.FileRepo;
 import com.example.ghost_storage.Storage.RelationRepo;
 import javassist.NotFoundException;
@@ -24,14 +25,17 @@ import java.util.Map;
 public class MyDocumentsController {
     private final FileRepo fileRepo;
     private final DataService dataService;
+    private final RawEditService rawEditService;
     private final MailSender mailSender;
     private final RelationRepo relationRepo;
 
-    public MyDocumentsController(FileRepo fileRepo, DataService dataService, RelationRepo relationRepo, MailSender mailSender) {
+    public MyDocumentsController(FileRepo fileRepo, DataService dataService,
+                                 RelationRepo relationRepo, MailSender mailSender, RawEditService rawEditService) {
         this.fileRepo = fileRepo;
         this.mailSender = mailSender;
         this.dataService = dataService;
         this.relationRepo = relationRepo;
+        this.rawEditService = rawEditService;
     }
 
     @GetMapping("/archive")
@@ -98,14 +102,13 @@ public class MyDocumentsController {
     @GetMapping("/document")
     public String newDoc(
             @AuthenticationPrincipal User user,
-            Map<String, Object> model) throws IOException {
+            Map<String, Object> model) throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         if (!user.isAdmin())
             return ResponseEntity.status(HttpStatus.FORBIDDEN).toString();
         model.put("fieldNames", Data.fieldNames());
         model.put("ruFieldNames", Data.ruFieldNames());
         model.put("levels", Data.acceptanceLevels());
-        model.put("ghostDescs", dataService.getGhostDesc().keySet().toArray(new String[0]));
-
+        model.put("ghostDescs", dataService.getGhostDesc());
         return "document_form";
     }
 
@@ -118,6 +121,83 @@ public class MyDocumentsController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).toString();
         Data doc = dataService.createDoc(file, params);
         return "redirect:/document/" + doc.getId();
+    }
+
+//    @GetMapping("/document/{documentId}")
+//    public String showDoc(
+//            @PathVariable String documentId,
+//            @AuthenticationPrincipal User user,
+//            Map<String, Object> model) throws FileNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+//        int id =  Integer.parseInt(documentId);
+//        Data file = fileRepo.findById(id).get(0);
+//        if (file.getState() == Data.State.CANCELED)
+//            return "redirect:/main";
+//        Map<String, String[]> fields = file.getAllValues();
+//        model.put("document", file);
+//        model.put("fileName", Data.fieldNames());
+//        model.put("levels", Data.acceptanceLevels());
+//        model.put("fields", fields);
+//        model.put("fieldNames", file.fieldNames());
+//        model.put("ruFieldNames", file.ruFieldNames());
+//
+//        model.put("activeLinks", dataService.getActiveLinkNames(file));
+//        model.put("activeLinks_f", dataService.getActiveLinkFRNames(file));
+//        model.put("inactiveLinks", dataService.getInactiveLinkNames(file));
+//        model.put("inactiveLinks_f", dataService.getInactiveLinkFRNames(file));
+//
+//        return "document_show";
+//    }
+
+    @GetMapping("/document/{documentId}/raw_edit")
+    public String rawEditDoc(
+            @PathVariable String documentId,
+            @AuthenticationPrincipal User user, Map<String, Object> model) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        if (!user.isAdmin())
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).toString();
+        List<Data> docs = fileRepo.findById(Integer.parseInt(documentId));
+        if (docs.size() > 0) {
+            Data file = docs.get(0);
+            if (file.getState() == Data.State.CANCELED)
+                return "redirect:/main";
+
+
+//            Map<String, String> lastFields = file.getLastValues();
+//            model.put("lastFields", lastFields);
+//            model.put("activeLinks", dataService.getLastActiveLinkNames(file));
+//            model.put("inactiveLinks", dataService.getLastInactiveLinkNames(file));
+
+
+            Map<String, String[]> allFields = file.getAllValues();
+            model.put("document", file);
+            model.put("allFields", allFields);
+            model.put("levels", Data.acceptanceLevels());
+            model.put("fieldNames", Data.fieldNames());
+            model.put("ruFieldNames", Data.ruFieldNames());
+            model.put("ghostDescs", dataService.getGhostDesc());
+
+            model.put("frMap", rawEditService.frMap());
+
+            model.put("activeLinks", dataService.getActiveLinkNames(file));
+            model.put("activeLinks_f", dataService.getActiveLinkFRNames(file));
+            model.put("inactiveLinks", dataService.getInactiveLinkNames(file));
+            model.put("inactiveLinks_f", dataService.getInactiveLinkFRNames(file));
+
+
+            return "raw_edit";
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).toString();
+        }
+    }
+
+    @PostMapping("/document/{documentId}/raw_edit")
+    public String rawUpdateDoc(
+            @PathVariable String documentId,
+            @RequestParam Map<String, String> params,
+            @AuthenticationPrincipal User user, Map<String, Object> model) throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException, NotFoundException {
+        if (!user.isAdmin())
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).toString();
+        rawEditService.editDoc(documentId, params);
+        return "redirect:/document/" + documentId;
     }
 
     @GetMapping("/document/{documentId}/edit")
@@ -138,7 +218,7 @@ public class MyDocumentsController {
             model.put("fieldNames", Data.fieldNames());
             model.put("ruFieldNames", Data.ruFieldNames());
 
-            model.put("ghostDescs", dataService.getGhostDesc().keySet().toArray(new String[0]));
+            model.put("ghostDescs", dataService.getGhostDesc());
             model.put("activeLinks", dataService.getLastActiveLinkNames(file));
             model.put("inactiveLinks", dataService.getLastInactiveLinkNames(file));
             return "document_form";
@@ -146,6 +226,26 @@ public class MyDocumentsController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).toString();
         }
     }
+
+
+    @PostMapping("/document/{documentId}/edit")
+    public String updateDoc(
+            @RequestParam("file") MultipartFile file,
+            @PathVariable String documentId,
+            @RequestParam Map<String, String> params,
+            @AuthenticationPrincipal User user, Map<String, Object> model) throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        if (!user.isAdmin())
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).toString();
+        try {
+            Data doc = dataService.updateDoc(documentId, file, params);
+            sendMessage(doc);
+            return "redirect:/document/" + doc.getId();
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).toString();
+        }
+    }
+
+
 
     @GetMapping("/favorite/{documentId}")
     public String addToFavorite(
@@ -180,23 +280,6 @@ public class MyDocumentsController {
             fileRepo.save(file);
             return "redirect:/document/" + file.getId();
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).toString();
-        }
-    }
-
-    @PostMapping("/document/{documentId}/edit")
-    public String updateDoc(
-            @RequestParam("file") MultipartFile file,
-            @PathVariable String documentId,
-            @RequestParam Map<String, String> params,
-            @AuthenticationPrincipal User user, Map<String, Object> model) throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
-        if (!user.isAdmin())
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).toString();
-        try {
-            Data doc = dataService.updateDoc(documentId, file, params);
-            sendMessage(doc);
-            return "redirect:/document/" + doc.getId();
-        } catch (NotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).toString();
         }
     }
@@ -242,13 +325,13 @@ public class MyDocumentsController {
                 return "redirect:/main";
             sendMessage(file);
             Map<String, String> lastFields = file.getLastValues();
-            model.put("parentDocDesc", "Взамен " + file.getFileDesc());
+            model.put("parentDocDesc", "Взамен " + file.getLastDesc());
             model.put("parentDocId", file.getId());
 
             model.put("fieldNames", Data.fieldNames());
             model.put("ruFieldNames", Data.ruFieldNames());
             model.put("levels", Data.acceptanceLevels());
-            model.put("ghostDescs", dataService.getGhostDesc().keySet().toArray(new String[0]));
+            model.put("ghostDescs", dataService.getGhostDesc());
             return "document_form";
 
         } else {
