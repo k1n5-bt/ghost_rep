@@ -488,6 +488,15 @@ public class DataService {
             }
         }
         doc.setActiveLinks(newIds);
+
+        int[] oldIdsFR = doc.getActiveLinks();
+        List<Integer> newIdsFR = new ArrayList<>();
+        for (int id : oldIdsFR) {
+            if (id != linkId) {
+                newIdsFR.add(id);
+            }
+        }
+        doc.setActiveLinksFirstRedaction(newIdsFR);
     }
 
     private String createFile(MultipartFile file) throws IOException {

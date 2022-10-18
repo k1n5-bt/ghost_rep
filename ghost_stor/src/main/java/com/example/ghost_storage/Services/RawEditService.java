@@ -86,11 +86,8 @@ public class RawEditService {
     }
 
     public void changeLinks(Data file, Map<String, String> params) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
-        updateLinks
-
-//        updateLinks(file,
-//                activeLinksIds.stream().mapToInt(i->i).toArray(),
-//                inactiveLinks.toArray(new String[0]));
+        updateLinks(file, params);
+        updateFRLinks(file, params);
     }
 
     public void updateLinks(Data file, Map<String, String> params) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
@@ -133,12 +130,52 @@ public class RawEditService {
         Arrays.sort(oldLinks);
 
         if (!Arrays.equals(newLinks, oldLinks)) {
-
+            file.setInactiveLinks(newLinks);
         }
     }
 
-    public void updateFRLinks() {
+    public void updateFRLinks(Data file, Map<String, String> params) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        Map<String, Integer> descs = dataService.getGhostDescMap();
+        List<Integer> activeLinksIds = new ArrayList<>();
+        List<String> inactiveLinks = new ArrayList<>();
 
+        for (String key : params.keySet().toArray(new String[0])) {
+            if (key.matches("normFRReferences.+")) {
+                if (!params.get(key).equals("")) {
+                    if (descs.containsKey(params.get(key))) {
+                        activeLinksIds.add(descs.get(params.get(key)));
+                    } else {
+                        inactiveLinks.add(params.get(key));
+                    }
+                }
+            }
+        }
+
+        int[] newLinksIds = activeLinksIds.stream().mapToInt(i->i).toArray();
+        Arrays.sort(newLinksIds);
+        int[] oldLinksIds = file.getActiveLinksFirstRedaction();
+        Arrays.sort(oldLinksIds);
+
+        int[] lastLinksIds = dataService.getLastActiveLinkValue(file);
+        Arrays.sort(lastLinksIds);
+
+        if (!Arrays.equals(newLinksIds, oldLinksIds)) {
+            if (Arrays.equals(lastLinksIds, oldLinksIds)) {
+                createAndRemoveRelations(file,
+                        Arrays.stream(oldLinksIds).boxed().collect(Collectors.toList()),
+                        Arrays.stream(newLinksIds).boxed().collect(Collectors.toList()));
+            }
+            file.setActiveLinksFirstRedaction(newLinksIds);
+        }
+
+        String[] newLinks = inactiveLinks.toArray(new String[0]);
+        Arrays.sort(newLinks);
+        String[] oldLinks = file.getInactiveLinksFirstRedaction();
+        Arrays.sort(oldLinks);
+
+        if (!Arrays.equals(newLinks, oldLinks)) {
+            file.setInactiveLinksFirstRedaction(newLinks);
+        }
     }
 
     public void createAndRemoveRelations(Data file, List<Integer> oldIds, List<Integer> newIds) {
@@ -173,7 +210,6 @@ public class RawEditService {
             }
         }
     }
-
 
     public Map<String, String> frMap() {
         Map<String, String> map  = new HashMap<>() {{
