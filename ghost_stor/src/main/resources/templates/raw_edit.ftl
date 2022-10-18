@@ -43,7 +43,7 @@
                             >
                         </td>
                         <td>
-                            <input class="form-control" type="text" name=${key + "FirstRedaction"} id=${key} required
+                            <input class="form-control" type="text" name=${key + "FirstRedaction"} id=${key}
                                     <#if allFields??> value="${allFields[key][1]}" </#if>
                             >
                         </td>
