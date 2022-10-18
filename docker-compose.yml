@@ -14,6 +14,8 @@ services:
     networks:
       node_net:
         ipv4_address: 172.28.1.9
+    depends_on:
+      - postgres
     ports:
       - 8085:8085
     volumes:

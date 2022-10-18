@@ -1,13 +1,20 @@
-import os
+import logging
 
 import dash as ds
 import dash.html as html
 from dash import dcc
+
+import sqlalchemy
+from utils import make_pg_url
+
 import json
 import datetime
 
+from config import config as cfg
+
 
 main_page = open("common.html", 'r').read()
+logger = logging.getLogger(__name__)
 
 
 def get_data_from_json():
@@ -49,4 +56,8 @@ def init_app():
 
 if __name__ == '__main__':
     app = init_app()
-    app.run(host=os.getenv('HOST', '0.0.0.0'), port=os.getenv('PORT', 8085), debug=True)
+    db = sqlalchemy.create_engine(make_pg_url(**cfg.DB_CONFIG))
+    with db.connect() as conn:
+        result = conn.execution_options(stream_results=True).execute("select * from usr")
+        logger.info(result.one())
+    app.run(host=cfg.HOST, port=cfg.PORT, debug=True)
