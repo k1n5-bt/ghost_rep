@@ -1,1 +1,5 @@
 dash==2.6.2
+SQLAlchemy==1.4.42
+psycopg2-binary==2.9.3
+asyncpg==0.25.0
+sqlalchemy_utils==0.38.2
