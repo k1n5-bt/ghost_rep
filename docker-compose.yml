@@ -1,34 +1,23 @@
 version: '3'
 
 services:
-  redis_stor:
+  dashboard:
     restart: unless-stopped
-    container_name: redis_stor
+    container_name: dashboard
     build:
       context: .
-      dockerfile: ./redis_stor/Dockerfile
+      dockerfile: ./dashboard/Dockerfile
     environment:
-      - PORT=8085
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - REDIS_PASS=qwerty132
+      POSTGRES_DB: "ghost_storage"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "Jad108fsdlknzc"
     networks:
       node_net:
         ipv4_address: 172.28.1.9
     ports:
       - 8085:8085
     volumes:
-      - ./redis_stor:/redis_stor
-
-  redis:
-    image: redis
-    container_name: redis
-    command: [ "sh", "-c", "exec redis-server --requirepass qwerty132" ]
-    ports:
-      - 6379:6379
-    networks:
-      node_net:
-        ipv4_address: 172.28.1.4
+      - ./dashboard:/app
 
   ghost_proj:
     restart: unless-stopped
