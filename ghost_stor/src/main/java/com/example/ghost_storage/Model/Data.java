@@ -51,6 +51,14 @@ public class Data {
         return dict;
     }
 
+    public String getLastDesc() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        String desc = this.getFileDescFirstRedaction();
+        if (desc == null) {
+            desc = this.getFileDesc();
+        }
+        return desc;
+    }
+
     public Data() {
         setState(State.ACTIVE);
     }

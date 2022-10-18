@@ -14,7 +14,7 @@
     <table class="table">
         <tr>
             <th>Описание</th>
-            <th>Первоначальная актуализация</th>
+            <th>Начальное значение</th>
             <th>Последняя актуализация</th>
         </tr>
         <#list fieldNames as key>

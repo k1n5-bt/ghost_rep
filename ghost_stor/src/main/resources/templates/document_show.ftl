@@ -17,10 +17,10 @@
         <#if isAdmin>
             <div style="display: flex">
                 <a href="/document/${document.id}/edit">
-                    <button class="btn btn-primary" style="margin: 0 10px 10px 0;">Актуализирновать данные</button>
+                    <button class="btn btn-primary" style="margin: 0 10px 10px 0;" onclick="showQuestion('edit')">Актуализирновать данные</button>
                 </a><br>
-                <a href="/document/${document.id}/edit">
-                    <button class="btn btn-primary" style="margin: 0 10px 10px;">Исправить данные</button>
+                <a href="/document/${document.id}/raw_edit">
+                    <button class="btn btn-primary" style="margin: 0 10px 10px;" onclick="showQuestion('raw_edit')">Исправить данные</button>
                 </a><br>
             </div>
             <div style="display: flex">
@@ -49,7 +49,7 @@
     <table class="table">
         <tr>
             <th>Описание</th>
-            <th>Первоначальная актуализация</th>
+            <th>Начальное значение</th>
             <th>Последняя актуализация</th>
         </tr>
         <#list fieldNames as key>
@@ -101,25 +101,11 @@
                 case "delete":
                     str = 'Документ будет безвозвратно удален.';
                     break;
-            }
-
-            let message = 'Вы уверены?\n';
-            let check = confirm(message + str);
-            if (check !== true) {
-                event.preventDefault();
-            }
-        }
-        function isInFavorite(action) {
-            let str;
-            switch (action) {
-                case "replace":
-                    str = 'Необходимо будет заполнить новый документ.';
+                case "edit":
+                    str = 'Документ будет изменен, история изменений сохранится.';
                     break;
-                case "archive":
-                    str = 'Документ будет отправлен в архив, а ссылки в других документах станут неактивны.';
-                    break;
-                case "delete":
-                    str = 'Документ будет безвозвратно удален.';
+                case "raw_edit":
+                    str = 'Документ будет изменен без сохранения истории изменений.';
                     break;
             }
 

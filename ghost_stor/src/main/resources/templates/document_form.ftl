@@ -19,9 +19,11 @@
                             <#if key == "levelOfAcceptance">
                                 <select name="levelOfAcceptance">
                                     <#list levels?keys as level>
-                                        <option value="${level}" <#if lastFields?? && lastFields[key] == level>selected</#if>>
-                                            ${levels[level]}
-                                        </option>
+                                        <#if "-" != level>
+                                            <option value="${level}" <#if lastFields?? && lastFields[key] == level>selected</#if>>
+                                                ${levels[level]}
+                                            </option>
+                                        </#if>
                                     </#list>
                                 </select>
                             <#elseif key == "fileDesc">
