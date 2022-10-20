@@ -59,6 +59,22 @@ public class Data {
         return desc;
     }
 
+    public String getLastOKS() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        String oks = this.getOKCcodeFirstRedaction();
+        if (oks == null) {
+            oks = this.getOKCcode();
+        }
+        return oks;
+    }
+
+    public String getLastOKPD() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        String okpd = this.getOKPDcodeFirstRedaction();
+        if (okpd == null) {
+            okpd = this.getOKPDcode();
+        }
+        return okpd;
+    }
+
     public Data() {
         setState(State.ACTIVE);
     }

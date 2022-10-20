@@ -3,6 +3,7 @@ package com.example.ghost_storage.Controllers;
 import com.example.ghost_storage.Services.DataService;
 import com.example.ghost_storage.Services.MailSender;
 import com.example.ghost_storage.Services.RawEditService;
+import com.example.ghost_storage.Services.StatisticService;
 import com.example.ghost_storage.Storage.FileRepo;
 import com.example.ghost_storage.Storage.RelationRepo;
 import javassist.NotFoundException;
@@ -18,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
@@ -28,14 +30,17 @@ public class MyDocumentsController {
     private final RawEditService rawEditService;
     private final MailSender mailSender;
     private final RelationRepo relationRepo;
+    private final StatisticService statisticService;
 
     public MyDocumentsController(FileRepo fileRepo, DataService dataService,
-                                 RelationRepo relationRepo, MailSender mailSender, RawEditService rawEditService) {
+                                 RelationRepo relationRepo, MailSender mailSender, RawEditService rawEditService,
+                                 StatisticService statisticService) {
         this.fileRepo = fileRepo;
         this.mailSender = mailSender;
         this.dataService = dataService;
         this.relationRepo = relationRepo;
         this.rawEditService = rawEditService;
+        this.statisticService = statisticService;
     }
 
     @GetMapping("/archive")
@@ -57,11 +62,14 @@ public class MyDocumentsController {
     public String showDoc(
             @PathVariable String documentId,
             @AuthenticationPrincipal User user,
-            Map<String, Object> model) throws FileNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+            Map<String, Object> model) throws FileNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException, ParseException {
         int id =  Integer.parseInt(documentId);
         Data file = fileRepo.findById(id).get(0);
         if (file.getState() == Data.State.CANCELED)
             return "redirect:/main";
+
+        statisticService.commitCall(file);
+
         Map<String, String[]> fields = file.getAllValues();
         model.put("document", file);
         model.put("fileName", Data.fieldNames());
