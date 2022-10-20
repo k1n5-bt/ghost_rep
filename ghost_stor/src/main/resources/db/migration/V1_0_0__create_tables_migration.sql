@@ -1,4 +1,14 @@
 create sequence hibernate_sequence start 1 increment 1;
+
+create table action_stat
+(
+    id        int8 not null,
+    action_id int4,
+    date      timestamp,
+    data_id   int4,
+    primary key (id)
+);
+
 create table data
 (
     id                                  int4 not null,
@@ -60,6 +70,16 @@ create table ghost_relation
     primary key (id)
 );
 
+create table show_stat
+(
+    id        int8 not null,
+    date      timestamp,
+    file_desc varchar(255),
+    okpd      varchar(255),
+    oks       varchar(255),
+    primary key (id)
+);
+
 create table usr
 (
     id              int8    not null,
@@ -84,6 +104,8 @@ create table favorites
     primary key (id)
 );
 
+alter table if exists action_stat
+    add constraint FKim50ggm9uwsdx9jcxfbfwshwu foreign key (data_id) references data;
 alter table if exists data
     add constraint FKlbca5nxa8xqrb7ieybvrxxuo3 foreign key (user_id) references usr;
 alter table if exists favorites
