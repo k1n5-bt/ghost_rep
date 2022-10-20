@@ -29,9 +29,7 @@ class MainController {
     }
 
     @GetMapping("/")
-    public String hello(){
-        return "hellopage";
-    }
+    public String hello(){return "hellopage";}
 
     @GetMapping("/main")
     public String main(
@@ -43,9 +41,9 @@ class MainController {
         if (isFavorites) {
             messages = fileRepo.findFavoritesData(user.getId().toString());
         } else if (descFilter.equals("")) {
-            messages = fileRepo.findByStateId(Data.State.ACTIVE.getValue());
+            messages = fileRepo.findByStateId(State.ACTIVE.getValue());
         } else {
-            messages = fileRepo.findByStateIdAndFileDescLike(Data.State.ACTIVE.getValue(), dataService.li(descFilter));
+            messages = fileRepo.findByStateIdAndFileDescLike(State.ACTIVE.getValue(), dataService.li(descFilter));
         }
         model.put("messages", messages);
         model.put("formAction", "/main");
