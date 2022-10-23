@@ -4,6 +4,7 @@ services:
   dashboard:
     restart: unless-stopped
     container_name: dashboard
+    image: k1n5/ghost_dashboard
     build:
       context: .
       dockerfile: ./dashboard/Dockerfile
@@ -24,6 +25,7 @@ services:
   ghost_proj:
     restart: unless-stopped
     container_name: ghost_proj
+    image: k1n5/ghost_rep
     build:
       context: .
       dockerfile: ./ghost_stor/Dockerfile
