@@ -2,6 +2,7 @@ package com.example.ghost_storage.Services;
 
 import com.example.ghost_storage.Model.Data;
 import com.example.ghost_storage.Model.GhostRelation;
+import com.example.ghost_storage.Model.State;
 import com.example.ghost_storage.Model.User;
 import com.example.ghost_storage.Storage.FileRepo;
 import com.example.ghost_storage.Storage.RelationRepo;
@@ -72,7 +73,7 @@ public class DataService {
         List<Data> docs = fileRepo.findById(oldDocId);
         if (docs.size() > 0) {
             Data file = docs.get(0);
-            file.setState(Data.State.CANCELED);
+            file.setState(State.CANCELED);
             setLastName(file, "status", "Заменен " + newDocDesc);
             fileRepo.save(file);
 
@@ -441,7 +442,7 @@ public class DataService {
     }
 
     public void archiveDocument(Data doc) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
-        doc.setState(Data.State.CANCELED);
+        doc.setState(State.CANCELED);
         setLastName(doc, "status", "Отменен");
 
         fileRepo.save(doc);
@@ -552,15 +553,15 @@ public class DataService {
     public List<Data> getArchiveData(String descFilter){
         List<Data> canceledData;
         if (descFilter.equals("")) {
-            canceledData = fileRepo.findByStateId(Data.State.CANCELED.getValue());
+            canceledData = fileRepo.findByStateId(State.CANCELED.getValue());
         } else {
-            canceledData = fileRepo.findByStateIdAndFileDescLike(Data.State.CANCELED.getValue(), li(descFilter));
+            canceledData = fileRepo.findByStateIdAndFileDescLike(State.CANCELED.getValue(), li(descFilter));
         }
         return canceledData;
     }
 
     public Map<String, Integer> getGhostDescMap() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
-        List<Data> files = fileRepo.findByStateId(Data.State.ACTIVE.getValue());
+        List<Data> files = fileRepo.findByStateId(State.ACTIVE.getValue());
         Map<String, Integer> dict = new HashMap<>();
         for (Data file : files) {
             dict.put(file.getLastDesc(), file.getId());
@@ -569,7 +570,7 @@ public class DataService {
     }
 
     public String[] getGhostDesc() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
-        List<Data> files = fileRepo.findByStateId(Data.State.ACTIVE.getValue());
+        List<Data> files = fileRepo.findByStateId(State.ACTIVE.getValue());
         String[] descArr = new String[files.size()];
         for (int i = 0; i < descArr.length; i++) {
             descArr[i] = files.get(i).getLastDesc();
@@ -578,7 +579,7 @@ public class DataService {
     }
 
     public Map<String, Integer> getActiveLinkNames(Data file) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
-        List<Data> docs = fileRepo.findByStateId(Data.State.ACTIVE.getValue());
+        List<Data> docs = fileRepo.findByStateId(State.ACTIVE.getValue());
         Map<String, Integer> dict = new HashMap<>();
         int[] ids = file.getActiveLinks();
 
@@ -591,7 +592,7 @@ public class DataService {
     }
 
     public Map<String, Integer> getActiveLinkFRNames(Data file) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
-        List<Data> docs = fileRepo.findByStateId(Data.State.ACTIVE.getValue());
+        List<Data> docs = fileRepo.findByStateId(State.ACTIVE.getValue());
         Map<String, Integer> dict = new HashMap<>();
         int[] ids = file.getActiveLinksFirstRedaction();
 
@@ -604,7 +605,7 @@ public class DataService {
     }
 
     public Map<String, Integer> getLastActiveLinkNames(Data file) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
-        List<Data> docs = fileRepo.findByStateId(Data.State.ACTIVE.getValue());
+        List<Data> docs = fileRepo.findByStateId(State.ACTIVE.getValue());
         Map<String, Integer> dict = new HashMap<>();
         int[] ids = getLastActiveLinkValue(file);
 

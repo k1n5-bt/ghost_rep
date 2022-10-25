@@ -4,6 +4,7 @@ import com.example.ghost_storage.Services.DataService;
 import com.example.ghost_storage.Services.MailSender;
 import com.example.ghost_storage.Services.RawEditService;
 import com.example.ghost_storage.Services.StatisticService;
+import com.example.ghost_storage.Storage.ActionStatRepo;
 import com.example.ghost_storage.Storage.FileRepo;
 import com.example.ghost_storage.Storage.RelationRepo;
 import javassist.NotFoundException;
@@ -65,7 +66,7 @@ public class MyDocumentsController {
             Map<String, Object> model) throws FileNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException, ParseException {
         int id =  Integer.parseInt(documentId);
         Data file = fileRepo.findById(id).get(0);
-        if (file.getState() == Data.State.CANCELED)
+        if (file.getState() == State.CANCELED)
             return "redirect:/main";
 
         statisticService.commitCall(file);
@@ -140,7 +141,7 @@ public class MyDocumentsController {
         List<Data> docs = fileRepo.findById(Integer.parseInt(documentId));
         if (docs.size() > 0) {
             Data file = docs.get(0);
-            if (file.getState() == Data.State.CANCELED)
+            if (file.getState() == State.CANCELED)
                 return "redirect:/main";
 
 
@@ -192,7 +193,7 @@ public class MyDocumentsController {
         List<Data> docs = fileRepo.findById(Integer.parseInt(documentId));
         if (docs.size() > 0) {
             Data file = docs.get(0);
-            if (file.getState() == Data.State.CANCELED)
+            if (file.getState() == State.CANCELED)
                 return "redirect:/main";
             Map<String, String> lastFields = file.getLastValues();
             model.put("document", file);
@@ -306,7 +307,7 @@ public class MyDocumentsController {
         List<Data> docs = fileRepo.findById(Integer.parseInt(documentId));
         if (docs.size() > 0) {
             Data file = docs.get(0);
-            if (file.getState() == Data.State.CANCELED)
+            if (file.getState() == State.CANCELED)
                 return "redirect:/main";
             sendMessage(file);
             Map<String, String> lastFields = file.getLastValues();
@@ -339,7 +340,7 @@ public class MyDocumentsController {
         Iterable<Data> messages;
         String[] fields = DataService.searchFields();
         if (params.size() == 0) {
-            messages = fileRepo.findByStateId(Data.State.ACTIVE.getValue());
+            messages = fileRepo.findByStateId(State.ACTIVE.getValue());
             for (String field : fields) {
                 params.put(field, "");
             }
