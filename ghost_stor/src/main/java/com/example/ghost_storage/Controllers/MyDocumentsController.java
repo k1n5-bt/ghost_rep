@@ -69,7 +69,8 @@ public class MyDocumentsController {
         if (file.getState() == State.CANCELED)
             return "redirect:/main";
 
-        statisticService.commitCall(file);
+        if (!user.isAdmin())
+            statisticService.commitCall(file);
 
         Map<String, String[]> fields = file.getAllValues();
         model.put("document", file);
