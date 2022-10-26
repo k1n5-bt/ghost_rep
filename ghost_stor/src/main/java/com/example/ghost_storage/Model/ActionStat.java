@@ -1,7 +1,10 @@
 package com.example.ghost_storage.Model;
 
 import javax.persistence.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 @Entity
 @Table(name = "action_stat")
@@ -24,7 +27,15 @@ public class ActionStat {
     public ActionStat(Action action, Data data){
         this.data = data;
         this.setAction(action);
-        this.date = new Date();
+        this.date = getTime();
+    }
+
+    private Date getTime() {
+        Date date = new Date();
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        df.setTimeZone(TimeZone.getTimeZone("Asia/Yekaterinburg"));
+        df.format(date);
+        return date;
     }
 
     public Action getAction () {

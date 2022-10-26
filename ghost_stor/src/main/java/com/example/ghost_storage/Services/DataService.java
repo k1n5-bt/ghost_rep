@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -26,16 +27,18 @@ public class DataService {
     
     private FileRepo fileRepo;
     private RelationRepo relationRepo;
+    private StatisticService statisticService;
 
     @Value("${upload.path}")
     private String uploadPath;
 
-    public DataService(FileRepo fileRepo, RelationRepo relationRepo, UserRepo userRepo) {
+    public DataService(FileRepo fileRepo, RelationRepo relationRepo, UserRepo userRepo, StatisticService statisticService) {
         this.fileRepo = fileRepo;
         this.relationRepo = relationRepo;
+        this.statisticService = statisticService;
     }
 
-    public Data createDoc(MultipartFile file, Map<String, String> params) throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+    public Data createDoc(MultipartFile file, Map<String, String> params) throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException, ParseException {
         Data doc = new Data();
         for (String fieldName : Data.fieldNames()) {
             if (!fieldName.equals("normReferences")) {
@@ -59,6 +62,9 @@ public class DataService {
         if (params.containsKey("parentDocId")) {
             int parentDocId = Integer.parseInt(params.get("parentDocId"));
             replaceDoc(parentDocId, doc.getId(), doc.getLastValues().get("fileDesc"));
+            statisticService.commitReplace(parentDocId);
+        } else {
+            statisticService.commitNew(doc);
         }
         return doc;
     }
