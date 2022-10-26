@@ -27,6 +27,9 @@
                     <li class="nav-item">
                         <a class="nav-link" aria-current="page" href="/archive">Архив</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/counts">Статистика</a>
+                    </li>
                 </#if>
             </ul>
             <div class="navbar-text me-3">${name}</div>
