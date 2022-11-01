@@ -2,7 +2,7 @@ from typing import List, Dict
 from datetime import date
 
 from flask import current_app
-from models import Statistic, ActionStatistic, Action
+from db.models import Statistic, ActionStatistic, Action
 
 from sqlalchemy import func
 from sqlalchemy.orm import Session
