@@ -4,7 +4,6 @@ from api.server import get_app
 
 import dash as ds
 import dash.html as html
-from flask.globals import g
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker

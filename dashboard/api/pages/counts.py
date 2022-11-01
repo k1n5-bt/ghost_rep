@@ -1,7 +1,7 @@
 from typing import Dict
 import datetime
 
-from dashboard.db.queries import get_request_counts
+from dashboard.db.queries import get_group_counts
 
 import dash
 from dash import html, dcc, callback, Input, Output
@@ -55,4 +55,4 @@ def layout():
 def update_date(start_date, end_date, value):
     start_date: datetime = datetime.datetime.strptime(start_date, '%Y-%m-%d')
     end_date: datetime = datetime.datetime.strptime(end_date, '%Y-%m-%d')
-    return generate_table(get_request_counts(start_date.date(), end_date.date(), value), value)
+    return generate_table(get_group_counts(start_date.date(), end_date.date(), value), value)
