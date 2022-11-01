@@ -1,7 +1,7 @@
 from typing import Dict
 import datetime
 
-from dashboard.db.queries import get_group_counts
+from db.queries import get_group_counts
 
 import dash
 from dash import html, dcc, callback, Input, Output
