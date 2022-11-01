@@ -2,9 +2,9 @@ from typing import List, Dict
 
 import datetime
 
-from dashboard.db.queries import get_action_counts
+from db.queries import get_action_counts
 
-from dashboard.config import config as cfg
+from config import config as cfg
 
 import dash
 from dash import html, dcc, callback, Input, Output
