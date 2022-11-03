@@ -23,7 +23,7 @@ def generate_table(dataframe: List[Dict]):
                                   # Body
                                   [html.Tr(id='items', children=[
                                       html.Td(
-                                          html.A('Ссылка на гост', href=f'{cfg.SPRING_DATA_URL}{items["data_id"]}')),
+                                          html.A('Ссылка на гост', href=f'{cfg.SPRING_URL}{items["data_id"]}')),
                                       html.Td(items['action_id']),
                                       html.Td(datetime.datetime.strptime(items['date'], '%Y-%m-%d %X.%f').date())]) for items
                                    in dataframe]
