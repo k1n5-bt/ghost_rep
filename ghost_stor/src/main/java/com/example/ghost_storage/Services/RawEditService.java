@@ -74,7 +74,7 @@ public class RawEditService {
 
                 String newValueFR = params.get(fieldName + fr);
                 String oldValueFR = getFRValue(file, fieldName);
-                if (!newValueFR.equals(oldValueFR)) {
+                if (!(newValueFR.equals("") && oldValueFR == null) && !newValueFR.equals(oldValueFR)) {
                     setFRValue(file, fieldName, newValueFR);
                 }
             }
