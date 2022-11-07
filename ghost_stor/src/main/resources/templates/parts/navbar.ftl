@@ -19,16 +19,16 @@
                 </li>
                 <#if isAdmin>
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="/user">Панель администратора</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link" aria-current="page" href="/document">Новый документ</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="/archive">Архив</a>
+                        <a class="nav-link" aria-current="page" href="/user">Панель администратора</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" aria-current="page" href="/counts">Статистика</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/archive">Архив</a>
                     </li>
                 </#if>
             </ul>
