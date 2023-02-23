@@ -12,13 +12,16 @@ services:
       POSTGRES_DB: "ghost_storage"
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "Jad108fsdlknzc"
+      HOST: ${HOST}
+      PORT: ${PORT}
+      DASHBOARD_PORT: ${DASHBOARD_PORT}
     networks:
       node_net:
         ipv4_address: 172.28.1.9
     depends_on:
       - postgres
     ports:
-      - 8085:8085
+      - ${DASHBOARD_PORT}:${DASHBOARD_PORT}
     volumes:
       - ./dashboard:/dashboard
 
@@ -29,13 +32,17 @@ services:
     build:
       context: .
       dockerfile: ./ghost_stor/Dockerfile
+    environment:
+      HOST: ${HOST}
+      PORT: ${PORT}
+      DASHBOARD_PORT: ${DASHBOARD_PORT}
     networks:
       node_net:
         ipv4_address: 172.28.1.10
     depends_on:
       - postgres
     ports:
-      - 8080:8080
+      - ${PORT}:${PORT}
     volumes:
       - ./ghost_stor:/ghost_stor
       - ./ghost_stor/src/files:/files
