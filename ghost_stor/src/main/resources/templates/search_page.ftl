@@ -11,6 +11,16 @@
                     </div>
                     <#if field == "introductionDate" || field == "adoptionDate">
                         <input class="form-control mb-2 search_field" type="text" name="${field}" value="${params[field]}" placeholder="2021-01-01">
+                    <#elseif field == "levelOfAcceptance">
+                        <select name="levelOfAcceptance" class="form-control mb-2 search_field" style="appearance: auto !important">
+                            <#list levels?keys as level>
+                                <#if "-" != level>
+                                    <option value="${level}" <#if params?? && params[field] == level>selected</#if>>
+                                        ${levels[level]}
+                                    </option>
+                                </#if>
+                            </#list>
+                        </select>
                     <#else>
                         <input class="form-control mb-2 search_field" type="text" name="${field}" value="${params[field]}" minlength="2">
                     </#if>

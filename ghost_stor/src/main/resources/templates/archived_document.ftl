@@ -21,11 +21,17 @@
             <tr>
                 <td>${ruFieldNames[key]}</td>
                 <#if key == "headContent" || key == "keywords" || key == "keyPhrases">
-                    <td><pre style="font-family: inherit;">${(fields[key][0] == '-')?string("", fields[key][0])}</pre></td>
-                    <td><pre style="font-family: inherit;">${fields[key][1]}</pre></td>
+                    <td><pre style="font-family: inherit; max-width: 600px;">${(fields[key][0] == '-')?string("", fields[key][0])}</pre></td>
+                    <td><pre style="font-family: inherit; max-width: 600px;">${fields[key][1]}</pre></td>
                 <#elseif key == "levelOfAcceptance">
                     <td><p style="max-width: 400px; word-break: break-word; margin-bottom: 0px">${levels[fields[key][0]]}</p></td>
                     <td><p style="max-width: 400px; word-break: break-word; margin-bottom: 0px">${levels[fields[key][1]]}</p></td>
+                <#elseif key == "status">
+                    <td><p style="max-width: 400px; word-break: break-word; margin-bottom: 0px">${statuses[fields[key][0]]}</p></td>
+                    <td><p style="max-width: 400px; word-break: break-word; margin-bottom: 0px">${statuses[fields[key][1]]}</p></td>
+                <#elseif key == "contents">
+                    <td><a href=${(fields[key][0] == '-')?string("", fields[key][0])}>${(fields[key][0] == '-')?string("", fields[key][0])}</a></td>
+                    <td><a href=${(fields[key][1] == '-')?string("", fields[key][1])}>${(fields[key][1] == '-')?string("", fields[key][1])}</a></td>
                 <#elseif key == "normReferences">
                     <td>
                         <#list activeLinks?keys as a_link>

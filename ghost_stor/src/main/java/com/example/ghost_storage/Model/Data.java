@@ -172,8 +172,22 @@ public class Data {
             put("a", "Международный");
             put("b", "Иностранный");
             put("c", "Стандарт организации");
-            put("d", "Национальный/межгосударственный");
+            put("d", "Национальный");
+            put("e", "Межгосударственный");
         }};
+        return map;
+    }
+
+
+    public static Map<String, String> acceptanceStatuses() {
+        Map<String, String> map  = new HashMap<>() {{
+            put("-", "");
+            put("", "");
+            put("a", "Действующий");
+            put("b", "Отменен");
+            put("c", "Заменен");
+        }};
+
         return map;
     }
 
