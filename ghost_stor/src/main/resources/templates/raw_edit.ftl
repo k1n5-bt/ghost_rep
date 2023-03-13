@@ -74,7 +74,7 @@
                                     <#if allFields??> value="${allFields[key][1]}" </#if>
                             >
                         </td>
-                    <#elseif key == "adoptionDate" || key == "introductionDate">
+                    <#elseif key == "adoptionDate" || key == "introductionDate" || key == "descUpdateDate">
                         <td>
                             <input class="form-control" type="date" name=${key} id=${key}
                                     <#if allFields??> value="${allFields[key][0]}" </#if>

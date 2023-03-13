@@ -40,7 +40,7 @@
                                 <input class="form-control" type="text" name=${key} id=${key} required
                                         <#if lastFields??> value="${lastFields[key]}" </#if>
                                 >
-                            <#elseif key == "adoptionDate" || key == "introductionDate">
+                            <#elseif key == "adoptionDate" || key == "introductionDate" || key == "descUpdateDate">
                                 <input class="form-control" type="date" name=${key} id=${key}
                                         <#if lastFields??> value="${lastFields[key]}" </#if>
                                 >

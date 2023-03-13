@@ -9,7 +9,7 @@
                     <div style="width: 215px; margin-right: 10px" class="form-control mb-2 search_field">
                         ${ruFields[field]}
                     </div>
-                    <#if field == "introductionDate" || field == "adoptionDate">
+                    <#if field == "introductionDate" || field == "adoptionDate" || field == "descUpdateDate">
                         <input class="form-control mb-2 search_field" type="text" name="${field}" value="${params[field]}" placeholder="2021-01-01">
                     <#elseif field == "levelOfAcceptance">
                         <select name="levelOfAcceptance" class="form-control mb-2 search_field" style="appearance: auto !important">
@@ -35,17 +35,14 @@
 
     <div class = "card-group">
         <#list messages as message>
-            <div class="col-md-6 col-xl-2">
-                <div class="card me-3">
-                    <img class="card-img-top" src="/static/doc.png">
-                    <div class="m-2">
-                        <span>
-                            <a href="/document/${message.id}" class="dock_link">${message.fileDesc}</a>
-                        </span><br>
-                        <#if message.filename != "">
-                            <a href="/files/${message.filename}" download>Скачать</a><br>
-                        </#if>
-                    </div>
+            <div class="gost_row">
+                <div class="column desc_column" title="<#if message.fileDescFirstRedaction??>${message.fileDescFirstRedaction}<#else>${message.fileDesc}</#if>">
+                    <a href="/document/${message.id}" class="gost_link">
+                        <#if message.fileDescFirstRedaction??>${message.fileDescFirstRedaction}<#else>${message.fileDesc}</#if>
+                    </a>
+                </div>
+                <div class="column name_column" title="<#if message.nameFirstRedaction??>${message.nameFirstRedaction}<#else>${(message.name == '-')?string("", message.name)}</#if>">
+                    <#if message.nameFirstRedaction??>${message.nameFirstRedaction}<#else>${(message.name == '-')?string("", message.name)}</#if>
                 </div>
             </div>
         <#else>

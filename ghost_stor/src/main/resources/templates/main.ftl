@@ -5,37 +5,21 @@
 
 <@c.page>
     <@s.search>
-        <div>
+        <div style="margin-bottom: 5px;">
             <input type="checkbox" id="favorites" name="qwe">
             <label for="favorites">Показывать только избранные</label>
         </div>
     </@s.search>
     <div class = "card-group">
         <#list messages as message>
-            <div class="col-md-6 col-xl-2">
-                <div class="card me-3">
-                    <img class="card-img-top" src="/static/doc.png">
-                    <div class="m-2">
-                        <span>
-                            <a href="/document/${message.id}" class="dock_link">
-                                <#if message.fileDescFirstRedaction??>
-                                    ${message.fileDescFirstRedaction}
-                                <#else>
-                                    ${message.fileDesc}
-                                </#if>
-                            </a>
-                        </span><br>
-                        <#if message.filename != "">
-                            <a href="/files/${message.filename}" download>Скачать</a><br>
-                        </#if>
-                    </div>
-                    <#if message.isUserInFavorite(user) == true>
-                        <div class="card-footer text-muted">
-                            <strong>
-                                <font size="1px">В избранном<br></font>
-                            </strong>
-                        </div>
-                    </#if>
+            <div class="gost_row">
+                <div class="column desc_column" title="<#if message.fileDescFirstRedaction??>${message.fileDescFirstRedaction}<#else>${message.fileDesc}</#if>">
+                    <a href="/document/${message.id}" class="gost_link">
+                        <#if message.fileDescFirstRedaction??>${message.fileDescFirstRedaction}<#else>${message.fileDesc}</#if>
+                    </a>
+                </div>
+                <div class="column name_column" title="<#if message.nameFirstRedaction??>${message.nameFirstRedaction}<#else>${(message.name == '-')?string("", message.name)}</#if>">
+                    <#if message.nameFirstRedaction??>${message.nameFirstRedaction}<#else>${(message.name == '-')?string("", message.name)}</#if>
                 </div>
             </div>
         <#else>
