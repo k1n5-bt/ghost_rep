@@ -2,7 +2,7 @@ from typing import List, Dict
 
 import datetime
 
-from db.queries import get_action_counts
+from db.queries import get_action_counts, get_count_active_data
 
 from config import config as cfg
 
@@ -15,41 +15,47 @@ column_names = {'New': 'Новые', 'Edit': 'Измененные', 'Archive': 
 
 def generate_table(dataframe: List[Dict]):
     counts = len(dataframe)
-    return html.Div(children=[html.B(f'Общее кол-во: {counts}'),
+    return html.Div(children=[html.B(f'Общее кол-во действий: {counts}'),
                               html.Table(
                                   # Header
-                                  [html.Tr(children=[html.Td('Гост'), html.Td('Действие'), html.Td('Дата')])] +
+                                  [html.Tr(children=[html.Th('Гост'), html.Th('Действие'), html.Th('Дата')])] +
 
                                   # Body
                                   [html.Tr(id='items', children=[
-                                      html.Td(
-                                          html.A('Ссылка на гост', href=f'{cfg.SPRING_URL}{items["data_id"]}')),
+                                      html.Td(html.A(str(items['data']), href=f'{cfg.SPRING_URL}{items["data_id"]}') if
+                                              items['data'] else html.Span('Гост был удален')),
                                       html.Td(items['action_id']),
-                                      html.Td(datetime.datetime.strptime(items['date'], '%Y-%m-%d %X.%f').date())]) for items
+                                      html.Td(
+                                          datetime.datetime.strptime(items['date'], '%Y-%m-%d %X.%f').date())])
+                                   for
+                                   items
                                    in dataframe]
                               )])
 
 
 def layout():
-    return html.Div(children=[dcc.DatePickerRange(
-        id="date-range",
-        min_date_allowed=datetime.date.today() - datetime.timedelta(days=365),
-        max_date_allowed=datetime.date.today() + datetime.timedelta(days=365),
-        start_date=datetime.date.today() - datetime.timedelta(days=7),
-        end_date=datetime.date.today() + datetime.timedelta(days=7),
-    ), dcc.Dropdown(
-                    id="type-filter",
-                    options=[
-                        {"label": column_names[key], "value": key}
-                        for key in column_names.keys()
-                    ],
-                    value='New',
-                    clearable=False,
-                    searchable=False,
-                    className="dropdown",
-                ),
-        html.Div(id='act_stat')], style={
-        'width': '350px',
+    active_count = get_count_active_data()
+    return html.Div(children=[html.Div(children=[html.P(children="Статиска действий с гостами")]),
+                              html.Br(),
+                              dcc.DatePickerRange(
+                                  id="date-range",
+                                  min_date_allowed=datetime.date.today() - datetime.timedelta(days=365),
+                                  max_date_allowed=datetime.date.today() + datetime.timedelta(days=365),
+                                  start_date=datetime.date.today() - datetime.timedelta(days=7),
+                                  end_date=datetime.date.today() + datetime.timedelta(days=7),
+                              ), html.Br(), dcc.Dropdown(
+            id="type-filter",
+            options=[
+                {"label": column_names[key], "value": key}
+                for key in column_names.keys()
+            ],
+            value='New',
+            clearable=False,
+            searchable=False,
+            className="dropdown",
+        ), html.B(f'Кол-во активных гостов: {active_count}'),
+                              html.Div(id='act_stat')], style={
+        'width': '400px',
         'border': '1px',
         'solid': 'green',
         'margin': 'auto',
