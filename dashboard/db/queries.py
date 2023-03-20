@@ -2,7 +2,7 @@ from typing import List, Dict
 from datetime import date
 
 from flask import current_app
-from db.models import Statistic, ActionStatistic, Action
+from db.models import Statistic, ActionStatistic, Action, Data, State
 
 from sqlalchemy import func
 from sqlalchemy.orm import Session
@@ -23,10 +23,14 @@ def get_action_counts(start_date: date, end_date: date, _type: str) -> List[Dict
             .filter(ActionStatistic.date > start_date) \
             .filter(ActionStatistic.date < end_date) \
             .where(ActionStatistic.action_id == Action[_type])
-        actions = session.execute(q).scalars().all()
-    result: List[Dict] = []
-    for item in actions:
-        result.append(item.to_dict())
+        actions: List[ActionStatistic] = session.execute(q).scalars().all()
+        result: List[Dict] = []
+        for item in actions:
+            q = session.query(Data).filter(Data.id == item.data_id)
+            data = session.execute(q).scalars().one_or_none()
+            action = item.to_dict()
+            action.update({'data': data})
+            result.append(action)
     return result
 
 
@@ -45,3 +49,12 @@ def get_group_counts(start_date: date, end_date: date, _type: str) -> Dict:
     for (key, value) in statistic:
         result.update({key: value})
     return result
+
+
+def get_count_active_data() -> int:
+    session_factory = current_app.session_factory
+    session: Session
+    with session_factory() as session:
+        q = session.query(Data).where(Data.state_id == State['Active'])
+        data = session.execute(q).scalars().all()
+    return len(data)

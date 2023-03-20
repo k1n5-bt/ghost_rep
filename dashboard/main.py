@@ -26,4 +26,4 @@ if __name__ == '__main__':
     engine = create_engine(make_pg_url(**cfg.DB_CONFIG))
     session_factory = sessionmaker(bind=engine)
     server.session_factory = session_factory
-    app.run(host=cfg.HOST, port=cfg.PORT, debug=True)
+    app.run(host='0.0.0.0', port=cfg.PORT, debug=True)
