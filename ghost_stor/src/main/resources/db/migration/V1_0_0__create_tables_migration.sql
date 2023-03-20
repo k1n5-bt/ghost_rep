@@ -105,7 +105,7 @@ create table favorites
 );
 
 alter table if exists action_stat
-    add constraint FKim50ggm9uwsdx9jcxfbfwshwu foreign key (data_id) references data;
+    add constraint FKim50ggm9uwsdx9jcxfbfwshwu foreign key (data_id) references data on delete set null;
 alter table if exists data
     add constraint FKlbca5nxa8xqrb7ieybvrxxuo3 foreign key (user_id) references usr;
 alter table if exists favorites
