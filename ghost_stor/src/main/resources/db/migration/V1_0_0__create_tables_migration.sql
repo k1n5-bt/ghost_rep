@@ -113,4 +113,4 @@ alter table if exists favorites
 alter table if exists favorites
     add constraint FKamd4jwxn0g1sxq6jnoxoqgpqq foreign key (id) references data;
 alter table if exists user_role
-    add constraint FKfpm8swft53ulq2hl11yplpr5 foreign key (user_id) references usr;
+    add constraint FKfpm8swft53ulq2hl11yplpr5 foreign key (user_id) references usr ON DELETE CASCADE;

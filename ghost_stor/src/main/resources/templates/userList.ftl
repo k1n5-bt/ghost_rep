@@ -13,7 +13,10 @@
                             <span style="font-size: 13px;">
                                 Роль: ${user.rolesName()?seq_contains("ADMIN")?string("Администратор", "Пользователь")}
                             </span><br>
-                            <a href="/user/${user.id}" class="dock_link">изменить</a>
+                            <a href="/user/${user.id}" class="dock_link">изменить</a><br>
+                            <#if user.username != "Администратор">
+                                <a href="/user/delete/${user.id}" class="dock_link">удалить</a>
+                            </#if>
                         </span><br>
                     </div>
                 </div>

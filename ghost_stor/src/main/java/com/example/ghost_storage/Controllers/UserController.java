@@ -46,6 +46,15 @@ public class UserController {
         return "userEdit";
     }
 
+    @GetMapping("/delete/{user}")
+    public String deleteUser(@AuthenticationPrincipal User currentUser,
+                             @PathVariable User user, Model model){
+        if (!currentUser.isAdmin())
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).toString();
+        userRepo.delete(user);
+        return "redirect:/user";
+    }
+
     @PostMapping
     public String userSave(
             @AuthenticationPrincipal User currentUser,
