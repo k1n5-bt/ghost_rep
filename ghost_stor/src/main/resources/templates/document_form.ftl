@@ -26,16 +26,26 @@
                                         </#if>
                                     </#list>
                                 </select>
+                            <#elseif key == "status">
+                                <select name="status">
+                                    <#list statuses?keys as status>
+                                        <#if "-" != status>
+                                            <option value="${status}" <#if lastFields?? && lastFields[key] == status>selected</#if>>
+                                                ${statuses[status]}
+                                            </option>
+                                        </#if>
+                                    </#list>
+                                </select>
                             <#elseif key == "fileDesc">
                                 <input class="form-control" type="text" name=${key} id=${key} required
                                         <#if lastFields??> value="${lastFields[key]}" </#if>
                                 >
-                            <#elseif key == "adoptionDate" || key == "introductionDate">
+                            <#elseif key == "adoptionDate" || key == "introductionDate" || key == "descUpdateDate">
                                 <input class="form-control" type="date" name=${key} id=${key}
                                         <#if lastFields??> value="${lastFields[key]}" </#if>
                                 >
                             <#elseif key == "headContent" || key == "keywords" || key == "keyPhrases">
-                                <textarea name=${key} id=${key} form="form"><#if lastFields??>${(lastFields[key] == '-')?string("", lastFields[key])}</#if></textarea>
+                                <textarea name=${key} id=${key} form="form" style="width: 500px; height: 100px;"><#if lastFields??>${(lastFields[key] == '-')?string("", lastFields[key])}</#if></textarea>
                             <#elseif key == "normReferences">
                                 <div class="autocomplete" style="width:200px;" id="normRefBlock">
                                     <button type="button" onclick="createInput('')" style='margin-bottom: 10px;'>+</button>

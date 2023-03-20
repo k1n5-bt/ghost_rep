@@ -96,7 +96,8 @@ public class Data {
                 "contents",
                 "normReferences",
                 "modifications",
-                "status"
+                "status",
+                "descUpdateDate"
         };
         return arr;
     }
@@ -119,6 +120,7 @@ public class Data {
             put("keyPhrases", "Ключевые фразы");
             put("normReferences", "Нормативные ссылки");
             put("modifications", "Поправки");
+            put("descUpdateDate", "Дата актуализации описания");
         }};
         return map;
     }
@@ -140,6 +142,7 @@ public class Data {
             put("keywords", "Keywords");
             put("keyPhrases", "KeyPhrases");
             put("modifications", "Modifications");
+            put("descUpdateDate", "DescUpdateDate");
         }};
         return map;
     }
@@ -161,6 +164,7 @@ public class Data {
             put("keywords", "");
             put("keyPhrases", "");
             put("modifications", "");
+            put("descUpdateDate", "");
         }};
         return map;
     }
@@ -172,8 +176,22 @@ public class Data {
             put("a", "Международный");
             put("b", "Иностранный");
             put("c", "Стандарт организации");
-            put("d", "Национальный/межгосударственный");
+            put("d", "Национальный");
+            put("e", "Межгосударственный");
         }};
+        return map;
+    }
+
+
+    public static Map<String, String> acceptanceStatuses() {
+        Map<String, String> map  = new HashMap<>() {{
+            put("-", "");
+            put("", "");
+            put("a", "Действующий");
+            put("b", "Отменен");
+            put("c", "Заменен");
+        }};
+
         return map;
     }
 
@@ -251,6 +269,8 @@ public class Data {
     private String keywordsFirstRedaction;
     private String keyPhrasesFirstRedaction;
     private String modificationsFirstRedaction;
+    private String descUpdateDate;
+    private String descUpdateDateFirstRedaction;
 
 
     private String activeLinks;
@@ -414,6 +434,22 @@ public class Data {
 
     public String getOKPDcodeFirstRedaction() {
         return OKPDcodeFirstRedaction;
+    }
+
+    public String getDescUpdateDate() {
+        return descUpdateDate;
+    }
+
+    public void setDescUpdateDate(String descUpdateDate) {
+        this.descUpdateDate = descUpdateDate;
+    }
+
+    public String getDescUpdateDateFirstRedaction() {
+        return descUpdateDateFirstRedaction;
+    }
+
+    public void setDescUpdateDateFirstRedaction(String descUpdateDateFirstRedaction) {
+        this.descUpdateDateFirstRedaction = descUpdateDateFirstRedaction;
     }
 
     public void setOKPDcodeFirstRedaction(String OKPDcodeFirstRedaction) {

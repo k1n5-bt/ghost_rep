@@ -6,14 +6,14 @@
 
     <div class = "card-group">
         <#list messages as message>
-            <div class="col-md-6 col-xl-2">
-                <div class="card me-3">
-                    <img class="card-img-top" src="/static/doc.png">
-                    <div class="m-2">
-                        <span>
-                            <a href="/archived_doc/${message.id}" class="dock_link">${message.fileDesc}</a>
-                        </span><br>
-                    </div>
+            <div class="gost_row">
+                <div class="column desc_column" title="<#if message.fileDescFirstRedaction??>${message.fileDescFirstRedaction}<#else>${message.fileDesc}</#if>">
+                    <a href="/archived_doc/${message.id}" class="gost_link">
+                        <#if message.fileDescFirstRedaction??>${message.fileDescFirstRedaction}<#else>${message.fileDesc}</#if>
+                    </a>
+                </div>
+                <div class="column name_column" title="<#if message.nameFirstRedaction??>${message.nameFirstRedaction}<#else>${(message.name == '-')?string("", message.name)}</#if>">
+                    <#if message.nameFirstRedaction??>${message.nameFirstRedaction}<#else>${(message.name == '-')?string("", message.name)}</#if>
                 </div>
             </div>
         <#else>

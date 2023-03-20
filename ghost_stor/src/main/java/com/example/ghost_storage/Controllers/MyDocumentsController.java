@@ -54,6 +54,7 @@ public class MyDocumentsController {
         Iterable<Data> messages = dataService.getArchiveData(descFilter);
         model.put("messages", messages);
         model.put("levels", Data.acceptanceLevels());
+
         model.put("descFilter", descFilter);
 
         return "archived_docs";
@@ -79,6 +80,7 @@ public class MyDocumentsController {
         model.put("fields", fields);
         model.put("fieldNames", file.fieldNames());
         model.put("ruFieldNames", file.ruFieldNames());
+        model.put("statuses", Data.acceptanceStatuses());
 
         model.put("activeLinks", dataService.getActiveLinkNames(file));
         model.put("activeLinks_f", dataService.getActiveLinkFRNames(file));
@@ -106,6 +108,7 @@ public class MyDocumentsController {
         model.put("ruFieldNames", file.ruFieldNames());
         model.put("activeLinks", dataService.getActiveLinkNames(file));
         model.put("inactiveLinks", file.getInactiveLinks());
+        model.put("statuses", Data.acceptanceStatuses());
         return "archived_document";
     }
 
@@ -118,6 +121,7 @@ public class MyDocumentsController {
         model.put("fieldNames", Data.fieldNames());
         model.put("ruFieldNames", Data.ruFieldNames());
         model.put("levels", Data.acceptanceLevels());
+        model.put("statuses", Data.acceptanceStatuses());
         model.put("ghostDescs", dataService.getGhostDesc());
         return "document_form";
     }
@@ -159,9 +163,8 @@ public class MyDocumentsController {
             model.put("fieldNames", Data.fieldNames());
             model.put("ruFieldNames", Data.ruFieldNames());
             model.put("ghostDescs", dataService.getGhostDesc());
-
             model.put("frMap", rawEditService.frMap());
-
+            model.put("statuses", Data.acceptanceStatuses());
             model.put("activeLinks", dataService.getActiveLinkNames(file));
             model.put("activeLinks_f", dataService.getActiveLinkFRNames(file));
             model.put("inactiveLinks", dataService.getInactiveLinkNames(file));
@@ -202,7 +205,7 @@ public class MyDocumentsController {
             model.put("lastFields", lastFields);
             model.put("fieldNames", Data.fieldNames());
             model.put("ruFieldNames", Data.ruFieldNames());
-
+            model.put("statuses", Data.acceptanceStatuses());
             model.put("ghostDescs", dataService.getGhostDesc());
             model.put("activeLinks", dataService.getLastActiveLinkNames(file));
             model.put("inactiveLinks", dataService.getLastInactiveLinkNames(file));
@@ -318,6 +321,7 @@ public class MyDocumentsController {
             model.put("fieldNames", Data.fieldNames());
             model.put("ruFieldNames", Data.ruFieldNames());
             model.put("levels", Data.acceptanceLevels());
+            model.put("statuses", Data.acceptanceStatuses());
             model.put("ghostDescs", dataService.getGhostDesc());
             return "document_form";
 
@@ -353,6 +357,7 @@ public class MyDocumentsController {
         model.put("fields", fields);
         model.put("messages", messages);
         model.put("levels", Data.acceptanceLevels());
+        model.put("statuses", Data.acceptanceStatuses());
         return "search_page";
     }
 }

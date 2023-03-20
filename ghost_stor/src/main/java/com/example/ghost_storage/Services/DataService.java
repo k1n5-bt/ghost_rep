@@ -74,7 +74,7 @@ public class DataService {
         if (docs.size() > 0) {
             Data file = docs.get(0);
             file.setState(State.CANCELED);
-            setLastName(file, "status", "Заменен " + newDocDesc);
+            setLastName(file, "status", "c");
             fileRepo.save(file);
 
             List<GhostRelation> relations = relationRepo.findByDataId(oldDocId);
@@ -443,7 +443,7 @@ public class DataService {
 
     public void archiveDocument(Data doc) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         doc.setState(State.CANCELED);
-        setLastName(doc, "status", "Отменен");
+        setLastName(doc, "status", "b");
 
         fileRepo.save(doc);
 

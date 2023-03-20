@@ -87,3 +87,38 @@ body{
 .about {
     display:inline-block;
 }
+
+
+.gost_row {
+    width: 100%;
+    display: flex;
+    margin-bottom: 4px;
+    background-color: #fff;
+}
+
+.column {
+    padding: 4px;
+    border: 1px solid #ced4da;;
+    border-radius: 0.25rem;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.desc_column {
+    min-width: 195px;
+    width: 195px;
+    border-top-right-radius: 0rem;
+    border-bottom-right-radius: 0rem;
+    color: #1468E0;
+}
+
+.name_column {
+    width: 100%;
+    border-top-left-radius: 0rem;
+    border-bottom-left-radius: 0rem;
+}
+
+.gost_link {
+    text-decoration: none;
+}

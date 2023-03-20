@@ -36,6 +36,33 @@
                                 </#list>
                             </select>
                         </td>
+
+
+
+
+                    <#elseif key == "status">
+                        <td>
+                            <select name="status">
+                                <#list statuses?keys as status>
+                                    <#if "-" != status>
+                                        <option value="${status}" <#if allFields?? && allFields[key][0] == status>selected</#if>>
+                                            ${statuses[status]}
+                                        </option>
+                                    </#if>
+                                </#list>
+                            </select>
+                        </td>
+                        <td>
+                            <select name="statusFirstRedaction">
+                                <#list statuses?keys as status>
+                                    <#if "-" != status>
+                                        <option value="${status}" <#if allFields?? && allFields[key][1] == status>selected</#if>>
+                                            ${statuses[status]}
+                                        </option>
+                                    </#if>
+                                </#list>
+                            </select>
+                        </td>
                     <#elseif key == "fileDesc">
                         <td>
                             <input class="form-control" type="text" name=${key} id=${key} required
@@ -47,7 +74,7 @@
                                     <#if allFields??> value="${allFields[key][1]}" </#if>
                             >
                         </td>
-                    <#elseif key == "adoptionDate" || key == "introductionDate">
+                    <#elseif key == "adoptionDate" || key == "introductionDate" || key == "descUpdateDate">
                         <td>
                             <input class="form-control" type="date" name=${key} id=${key}
                                     <#if allFields??> value="${allFields[key][0]}" </#if>
@@ -60,10 +87,10 @@
                         </td>
                     <#elseif key == "headContent" || key == "keywords" || key == "keyPhrases">
                         <td>
-                            <textarea name=${key} id=${key} form="form"><#if allFields??>${(allFields[key][0] == '-')?string("", allFields[key][0])}</#if></textarea>
+                            <textarea name=${key} id=${key} style="width: 500px; height: 100px;" form="form"><#if allFields??>${(allFields[key][0] == '-')?string("", allFields[key][0])}</#if></textarea>
                         </td>
                         <td>
-                            <textarea name=${key + "FirstRedaction"} id=${key} form="form"><#if allFields??>${(allFields[key][1] == '-')?string("", allFields[key][1])}</#if></textarea>
+                            <textarea name=${key + "FirstRedaction"} id=${key} style="width: 500px; height: 100px;" form="form"><#if allFields??>${(allFields[key][1] == '-')?string("", allFields[key][1])}</#if></textarea>
                         </td>
                     <#elseif key == "normReferences">
                         <td>
